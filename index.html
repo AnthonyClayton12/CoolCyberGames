@@ -7,120 +7,137 @@
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #000000; /* Black background */
-            color: #ffffff; /* White text */
+            font-family: 'Courier New', Courier, monospace; /* Retro, terminal-like font */
+            background-color: #000000; /* Pure black background */
+            color: #ff6600; /* Neon orange text */
+            overflow-x: hidden; /* Prevent horizontal scroll */
         }
 
         header {
-            background-color: #990000; /* Crimson background */
+            background-color: #000000; /* Black header */
+            border-bottom: 2px solid #ff6600; /* Neon orange border */
             padding: 20px;
             text-align: center;
         }
 
         header h1 {
-            color: #ffd700; /* Gold text */
+            font-size: 36px;
+            margin: 0;
+            color: #ff6600; /* Neon orange text */
         }
 
         nav {
             display: flex;
             justify-content: center;
-            background-color: #660000; /* Darker crimson for nav */
             padding: 10px 0;
+            background-color: #000000;
+            border-bottom: 1px solid #ff6600;
         }
 
         nav a {
-            color: #ffffff; /* White text for links */
+            color: #ff6600; /* Neon orange */
             text-decoration: none;
             margin: 0 15px;
             font-size: 18px;
-            transition: transform 0.3s ease, color 0.3s ease, text-decoration 0.3s ease;
+            font-weight: bold;
+            transition: color 0.3s ease, transform 0.3s ease;
         }
 
         nav a:hover {
-            color: #ffd700; /* Gold hover color */
-            text-decoration: underline; /* Underlines the link */
-            transform: translateY(-3px); /* Floats the link up */
+            color: #ffffff; /* White hover effect */
+            transform: scale(1.1); /* Slight enlargement */
         }
 
-        .home-section {
+        .home-section, .project-section {
+            padding: 30px 20px;
             text-align: center;
-            margin-top: 100px;
-        }
-
-        .home-section h2 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            color: #ffd700; /* Gold heading */
-        }
-
-        .home-section p {
-            font-size: 20px;
-            line-height: 1.6;
             max-width: 800px;
             margin: 0 auto;
+            border: 1px dashed #ff6600; /* Neon orange dashed border */
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .home-section h2, .project-section h3 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ffffff; /* White for emphasis */
+            text-shadow: 0 0 5px #ff6600; /* Glowing neon effect */
+        }
+
+        .home-section p, .project-section p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #ff6600; /* Neon orange text */
         }
 
         .button-coming-soon {
-            margin-top: 30px;
+            margin-top: 20px;
             padding: 15px 30px;
-            background-color: #990000; /* Crimson button */
-            color: #ffffff; /* White text */
-            font-size: 20px;
-            border: none;
+            background-color: #000000; /* Black background */
+            color: #ff6600; /* Neon orange text */
+            border: 2px solid #ff6600; /* Neon orange border */
             border-radius: 5px;
+            font-size: 16px;
             cursor: not-allowed;
         }
 
-        .project-section {
-            max-width: 900px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #660000; /* Dark crimson background */
-            border-radius: 10px;
-        }
-
-        .project-section h3 {
-            text-align: center;
-            color: #ffd700; /* Gold heading */
-            margin-bottom: 30px;
-        }
-
         .milestone {
-            margin: 30px 0;
+            text-align: left;
+            margin-top: 20px;
         }
 
-        .milestone h4 {
-            color: #ffffff; /* White text for milestone headings */
+        .milestone h4, .milestone h5 {
+            color: #ffffff; /* White for milestone headings */
         }
 
         .buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
             margin-top: 10px;
         }
 
         .buttons a {
-            display: block;
-            padding: 10px 20px;
-            background-color: #990000; /* Crimson buttons */
-            color: #ffffff; /* White text */
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            color: #ff6600;
             text-decoration: none;
-            border-radius: 5px;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
+            font-size: 14px;
+            border: 1px solid #ff6600;
+            border-radius: 3px;
+            background-color: #000000;
+            transition: background-color 0.3s ease, transform 0.3s ease;
         }
 
         .buttons a:hover {
-            background-color: #cc0000; /* Lighter crimson hover */
+            background-color: #ff6600; /* Neon orange on hover */
+            color: #000000; /* Black text */
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            font-size: 14px;
+            border-top: 1px solid #ff6600;
+            margin-top: 50px;
+            color: #ff6600;
+        }
+
+        /* Optional flicker animation for text */
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        header h1, .home-section h2, .project-section h3 {
+            animation: flicker 1.5s infinite;
         }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>TBD</h1>
+    <h1>CyberSphere</h1>
 </header>
 
 <nav>
@@ -129,8 +146,8 @@
 </nav>
 
 <section id="home" class="home-section">
-    <h2>TBD: Interactive Web Application for Cybersecurity Learning</h2>
-    <p>Welcome to ____! Our mission is to create an engaging, interactive web application that enhances cybersecurity learning for users of all skill levels. Explore our project materials and stay tuned for exciting updates!</p>
+    <h2>Welcome to CyberSphere</h2>
+    <p>An immersive web-based cybersecurity learning experience inspired by old-school computing. Explore interactive challenges and advance your skills in a retro-style, neon-lit command-line environment.</p>
     <button class="button-coming-soon" disabled>Coming Soon</button>
 </section>
 
@@ -138,9 +155,9 @@
     <h3>Project Materials</h3>
 
     <div>
-        <p><strong>Project Name:</strong> TBD</p>
-        <p><strong>Team Members and Email Addresses:</strong></p>
-        <p><strong>Faculty Advisor:</strong> </p>
+        <p><strong>Project Name:</strong> CyberSphere</p>
+        <p><strong>Team Members and Email Addresses:</strong> [Add team members]</p>
+        <p><strong>Faculty Advisor:</strong> [Add advisor name]</p>
     </div>
 
     <div class="milestone">
@@ -207,6 +224,9 @@
     </div>
 </section>
 
+<footer>
+    <p>© 2025 CyberSphere. All rights reserved.</p>
+</footer>
+
 </body>
 </html>
-
