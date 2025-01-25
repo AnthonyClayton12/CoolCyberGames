@@ -1,15 +1,14 @@
-/* General Styles */
 body {
     margin: 0;
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #000000;
-    color: #ffffff;
-    overflow-x: hidden;
+    font-family: 'Courier New', Courier, monospace; /* Retro, terminal-like font */
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 header {
-    background-color: #000000;
-    border-bottom: 2px solid #ffffff;
+    background-color: #ffffff; /* White header */
+    border-bottom: 2px solid #000000; /* Black border */
     padding: 20px;
     text-align: center;
 }
@@ -17,19 +16,19 @@ header {
 header h1 {
     font-size: 36px;
     margin: 0;
-    color: #ffffff;
+    color: #000000; /* Black text */
 }
 
 nav {
     display: flex;
     justify-content: center;
     padding: 10px 0;
-    background-color: #000000;
-    border-bottom: 1px solid #ffffff;
+    background-color: #ffffff; /* White background */
+    border-bottom: 1px solid #000000; /* Black border */
 }
 
 nav a {
-    color: #ffffff;
+    color: #000000; /* Black text */
     text-decoration: none;
     margin: 0 15px;
     font-size: 18px;
@@ -38,9 +37,9 @@ nav a {
 }
 
 nav a:hover {
-    color: #000000;
-    background-color: #ffffff;
-    transform: scale(1.1);
+    color: #ffffff; /* White hover effect */
+    background-color: #000000; /* Black background */
+    transform: scale(1.1); /* Slight enlargement */
 }
 
 .home-section, .project-section {
@@ -48,7 +47,7 @@ nav a:hover {
     text-align: center;
     max-width: 800px;
     margin: 0 auto;
-    border: 1px dashed #ffffff;
+    border: 1px dashed #000000; /* Black dashed border */
     border-radius: 10px;
     margin-top: 30px;
 }
@@ -56,21 +55,21 @@ nav a:hover {
 .home-section h2, .project-section h3 {
     font-size: 28px;
     margin-bottom: 20px;
-    color: #ffffff;
+    color: #000000; /* Black text */
 }
 
 .home-section p, .project-section p {
     font-size: 16px;
     line-height: 1.6;
-    color: #ffffff;
+    color: #000000; /* Black text */
 }
 
 .button-coming-soon {
     margin-top: 20px;
     padding: 15px 30px;
-    background-color: #000000;
-    color: #ffffff;
-    border: 2px solid #ffffff;
+    background-color: #ffffff; /* White background */
+    color: #000000; /* Black text */
+    border: 2px solid #000000; /* Black border */
     border-radius: 5px;
     font-size: 16px;
     cursor: not-allowed;
@@ -82,7 +81,7 @@ nav a:hover {
 }
 
 .milestone h4, .milestone h5 {
-    color: #ffffff;
+    color: #000000; /* Black for milestone headings */
 }
 
 .buttons {
@@ -93,18 +92,18 @@ nav a:hover {
     display: inline-block;
     margin: 5px;
     padding: 8px 15px;
-    color: #ffffff;
+    color: #000000; /* Black text */
     text-decoration: none;
     font-size: 14px;
-    border: 1px solid #ffffff;
+    border: 1px solid #000000; /* Black border */
     border-radius: 3px;
-    background-color: #000000;
+    background-color: #ffffff; /* White background */
     transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
 .buttons a:hover {
-    background-color: #ffffff;
-    color: #000000;
+    background-color: #000000; /* Black background */
+    color: #ffffff; /* White text */
     transform: scale(1.05);
 }
 
@@ -112,17 +111,7 @@ footer {
     text-align: center;
     padding: 10px 0;
     font-size: 14px;
-    border-top: 1px solid #ffffff;
+    border-top: 1px solid #000000;
     margin-top: 50px;
-    color: #ffffff;
-}
-
-/* Optional flicker animation for text */
-@keyframes flicker {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.8; }
-}
-
-header h1, .home-section h2, .project-section h3 {
-    animation: flicker 1.5s infinite;
+    color: #000000; /* Black text */
 }
