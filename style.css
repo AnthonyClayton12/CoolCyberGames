@@ -1,1 +1,128 @@
+/* General Styles */
+body {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    background-color: #000000;
+    color: #ffffff;
+    overflow-x: hidden;
+}
 
+header {
+    background-color: #000000;
+    border-bottom: 2px solid #ffffff;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 {
+    font-size: 36px;
+    margin: 0;
+    color: #ffffff;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+    background-color: #000000;
+    border-bottom: 1px solid #ffffff;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    margin: 0 15px;
+    font-size: 18px;
+    font-weight: bold;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+nav a:hover {
+    color: #000000;
+    background-color: #ffffff;
+    transform: scale(1.1);
+}
+
+.home-section, .project-section {
+    padding: 30px 20px;
+    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
+    border: 1px dashed #ffffff;
+    border-radius: 10px;
+    margin-top: 30px;
+}
+
+.home-section h2, .project-section h3 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.home-section p, .project-section p {
+    font-size: 16px;
+    line-height: 1.6;
+    color: #ffffff;
+}
+
+.button-coming-soon {
+    margin-top: 20px;
+    padding: 15px 30px;
+    background-color: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: not-allowed;
+}
+
+.milestone {
+    text-align: left;
+    margin-top: 20px;
+}
+
+.milestone h4, .milestone h5 {
+    color: #ffffff;
+}
+
+.buttons {
+    margin-top: 10px;
+}
+
+.buttons a {
+    display: inline-block;
+    margin: 5px;
+    padding: 8px 15px;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 14px;
+    border: 1px solid #ffffff;
+    border-radius: 3px;
+    background-color: #000000;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.buttons a:hover {
+    background-color: #ffffff;
+    color: #000000;
+    transform: scale(1.05);
+}
+
+footer {
+    text-align: center;
+    padding: 10px 0;
+    font-size: 14px;
+    border-top: 1px solid #ffffff;
+    margin-top: 50px;
+    color: #ffffff;
+}
+
+/* Optional flicker animation for text */
+@keyframes flicker {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+header h1, .home-section h2, .project-section h3 {
+    animation: flicker 1.5s infinite;
+}
