@@ -1,0 +1,24 @@
+{
+  "name": "coolcybergames",
+  "version": "1.0.0",
+  "description": "Repo for senior project, making a web app for teaching cybersecurity",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnthonyClayton12/CoolCyberGames.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnthonyClayton12/CoolCyberGames/issues"
+  },
+  "homepage": "https://github.com/AnthonyClayton12/CoolCyberGames#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
