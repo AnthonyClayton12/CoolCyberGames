@@ -5,6 +5,9 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
+// Serve static files from the current directory
+app.use(express.static(__dirname));  
+
 // Middleware
 app.use(express.json()); // For parsing JSON requests
 app.use(cors()); // For frontend requests
@@ -22,9 +25,9 @@ const connectDB = async () => {
 
 connectDB();
 
-// Example homepage
+// Route to homepage html
 app.get('/', (req, res) => {
-  res.send('Welcome to Cool Cyber Games!');
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Test API Endpoint
