@@ -3,78 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Cyber Games</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
+    <title>Matthew Goembel - Portfolio</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-left">
-            <img src="logo.png" alt="Logo" class="logo">
-            <span class="brand">Cool Cyber Games</span>
-        </div>
-        <ul class="nav-links">
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Games</a></li>
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Leaderboard</a></li>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-bar fade-in">
+        <ul>
+            <li><a href="#home">Home</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#opensource">Open Source</a></li>
+            <li><a href="#resume">Resume</a></li>
         </ul>
-        <div class="nav-right">
-            <div class="profile-menu">
-                <img src="profile-icon.png" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
-                <ul class="dropdown-menu" id="dropdown">
-                    <li><a href="#">Settings</a></li>
-                    <li><a href="#">Contact</a></li>
-                    <li><a href="#">Logout</a></li>
-                </ul>
-            </div>
-        </div>
     </nav>
-    
-    <!-- Main Content -->
-    <div class="main-container">
-        <!-- Left Sidebar: Updates & News -->
-        <aside class="sidebar">
-            <h2>Updates & News</h2>
+
+    <!-- Header Section -->
+    <header class="fade-in">
+        <h1 class="logo">MATT GOEMBEL</h1>
+        <p class="typewriter-text" data-text="Software Engineer | Cybersecurity Enthusiast"></p>
+    </header>
+
+    <!-- Profile Dropdown -->
+    <div class="profile-menu fade-in">
+        <button class="play-button">Profile</button>
+        <div class="dropdown-menu">
             <ul>
-                <li>🔥 New Game Mode Released!</li>
-                <li>🏆 Weekly Leaderboard Reset</li>
-                <li>🔒 Cybersecurity Tip of the Day</li>
+                <li><a href="#">Settings</a></li>
+                <li><a href="#">Portfolio</a></li>
+                <li><a href="#">Logout</a></li>
             </ul>
-        </aside>
-        
-        <!-- Main Section -->
-        <main class="content">
-            <div class="hero">
-                <img src="logo.png" alt="Logo" class="hero-logo">
-                <h1>Cool Cyber Games</h1>
-                <p>Learn cybersecurity through fun and interactive games!</p>
-                <button onclick="testAPI()">Test API</button>
-                <a href="/games/phaser_game_1/index.html" class="play-button">Play Now!</a>
-                <p id="api-result"></p>
-            </div>
-            
-            <!-- Popular Games & Challenges -->
-            <section class="game-section">
-                <h2>Popular Games & New Challenges</h2>
-                <div class="game-list">
-                    <div class="game-card">🕵️‍♂️ Phishing Simulator</div>
-                    <div class="game-card">🔓 Password Cracker</div>
-                    <div class="game-card">🛡️ Firewall Defender</div>
-                </div>
-            </section>
-            
-            <!-- Leaderboard -->
-            <section class="leaderboard">
-                <h2>Leaderboard</h2>
-                <ol>
-                    <li>👑 Alex - 4500 pts</li>
-                    <li>🎖️ Jordan - 3900 pts</li>
-                    <li>🏅 Sam - 3500 pts</li>
-                </ol>
-            </section>
-        </main>
+        </div>
     </div>
+
+    <!-- Main Content -->
+    <main>
+        <section id="home" class="fade-in">
+            <h2>Welcome to My Portfolio</h2>
+            <p>Explore my work, projects, and contributions to open-source development.</p>
+        </section>
+
+        <section id="projects" class="fade-in">
+            <h2>Projects</h2>
+            <p>Check out my latest coding projects and cybersecurity challenges.</p>
+        </section>
+
+        <section id="opensource" class="fade-in">
+            <h2>Open Source Contributions</h2>
+            <p>I actively contribute to various open-source projects. Learn more below.</p>
+        </section>
+
+        <section id="resume" class="fade-in">
+            <h2>My Resume</h2>
+            <p>View my experience, skills, and professional background.</p>
+        </section>
+    </main>
+
+    <script src="animations.js"></script>
 </body>
 </html>
