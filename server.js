@@ -1,12 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const path = require('path');
 const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serve static files from the current directory
-app.use(express.static(__dirname));  
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware
 app.use(express.json()); // For parsing JSON requests
@@ -25,9 +26,9 @@ const connectDB = async () => {
 
 connectDB();
 
-// Route to homepage html
+// Route to homepage
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Test API Endpoint
