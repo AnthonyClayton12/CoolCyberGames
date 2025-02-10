@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Sidebar -->
     <div class="sidebar">
         <h2>Menu</h2>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">Games</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/games/phaser_game_1/index.html">Games</a></li>
+            <li><a href="/about/index.html">About</a></li>
+            <li><a href="/contact/index.html">Contact</a></li>
         </ul>
     </div>
 
@@ -42,16 +42,6 @@
         </div>
     </div>
 
-    <script>
-        async function testAPI() {
-            try {
-                let response = await fetch('/api/test');
-                let data = await response.json();
-                document.getElementById('api-result').innerText = data.message;
-            } catch (error) {
-                document.getElementById('api-result').innerText = 'API request failed!';
-            }
-        }
-    </script>
+    <script src="js/script.js"></script>
 </body>
 </html>
