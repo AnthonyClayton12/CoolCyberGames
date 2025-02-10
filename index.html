@@ -5,53 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Menu</h2>
-        <ul>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-left">
+            <img src="logo.png" alt="Logo" class="logo">
+            <span class="brand">Cool Cyber Games</span>
+        </div>
+        <ul class="nav-links">
             <li><a href="#">Home</a></li>
             <li><a href="#">Games</a></li>
-            <li><a href="#">About</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="#">Leaderboard</a></li>
         </ul>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>Welcome to Cool Cyber Games! 🎮</h1>
-            <p>Interactive games & puzzles to learn cybersecurity!</p>
-        </header>
-
-        <!-- Content Box 1 -->
-        <div class="content-box">
-            <h2>Test the API</h2>
-            <p>Click the button below to test the API connection.</p>
-            <button onclick="testAPI()">Test API</button>
-            <p id="api-result"></p>
+        <div class="nav-right">
+            <div class="profile-menu">
+                <img src="profile-icon.png" alt="Profile" class="profile-icon" onclick="toggleDropdown()">
+                <ul class="dropdown-menu" id="dropdown">
+                    <li><a href="#">Settings</a></li>
+                    <li><a href="#">Contact</a></li>
+                    <li><a href="#">Logout</a></li>
+                </ul>
+            </div>
         </div>
-
-        <!-- Content Box 2 -->
-        <div class="content-box">
-            <h2>Play Now!</h2>
-            <p>Ready to dive into the fun? Click the button below to start playing.</p>
-            <a href="/games/phaser_game_1/index.html" class="play-button">Play Now!</a>
-        </div>
+    </nav>
+    
+    <!-- Main Content -->
+    <div class="main-container">
+        <!-- Left Sidebar: Updates & News -->
+        <aside class="sidebar">
+            <h2>Updates & News</h2>
+            <ul>
+                <li>🔥 New Game Mode Released!</li>
+                <li>🏆 Weekly Leaderboard Reset</li>
+                <li>🔒 Cybersecurity Tip of the Day</li>
+            </ul>
+        </aside>
+        
+        <!-- Main Section -->
+        <main class="content">
+            <div class="hero">
+                <img src="logo.png" alt="Logo" class="hero-logo">
+                <h1>Cool Cyber Games</h1>
+                <p>Learn cybersecurity through fun and interactive games!</p>
+                <button onclick="testAPI()">Test API</button>
+                <a href="/games/phaser_game_1/index.html" class="play-button">Play Now!</a>
+                <p id="api-result"></p>
+            </div>
+            
+            <!-- Popular Games & Challenges -->
+            <section class="game-section">
+                <h2>Popular Games & New Challenges</h2>
+                <div class="game-list">
+                    <div class="game-card">🕵️‍♂️ Phishing Simulator</div>
+                    <div class="game-card">🔓 Password Cracker</div>
+                    <div class="game-card">🛡️ Firewall Defender</div>
+                </div>
+            </section>
+            
+            <!-- Leaderboard -->
+            <section class="leaderboard">
+                <h2>Leaderboard</h2>
+                <ol>
+                    <li>👑 Alex - 4500 pts</li>
+                    <li>🎖️ Jordan - 3900 pts</li>
+                    <li>🏅 Sam - 3500 pts</li>
+                </ol>
+            </section>
+        </main>
     </div>
-
-    <script>
-        async function testAPI() {
-            try {
-                let response = await fetch('/api/test');
-                let data = await response.json();
-                document.getElementById('api-result').innerText = data.message;
-            } catch (error) {
-                document.getElementById('api-result').innerText = 'API request failed!';
-            }
-        }
-    </script>
 </body>
 </html>
