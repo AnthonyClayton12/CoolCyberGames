@@ -1,8 +1,8 @@
 /* General Page Styling */
 body {
     font-family: Arial, sans-serif;
-    background-color: #1E1E1E; /* Charcoal Gray – Background */
-    color: #E0E0E0; /* Light Gray – Secondary text */
+    background-color: #000000; /* Black – Background */
+    color: #FFFFFF; /* White – Main text */
     text-align: center;
     padding: 20px;
     margin: 0;
@@ -10,7 +10,7 @@ body {
 
 /* Navigation Bar */
 .nav-bar {
-    background-color: #2c2c2c;
+    background-color: #1A1A1A; /* Darker Black for navbar */
     padding: 15px;
     border-radius: 10px;
     position: fixed;
@@ -36,14 +36,14 @@ body {
 
 .nav-bar ul li a {
     text-decoration: none;
-    color: #00D8FF;
+    color: #FF0000; /* Red */
     font-size: 18px;
     font-weight: bold;
     transition: color 0.3s ease-in-out;
 }
 
 .nav-bar ul li a:hover {
-    color: #FF6900;
+    color: #FF6900; /* Light Orange */
 }
 
 /* Header and Name Logo */
@@ -54,8 +54,8 @@ header {
 .logo {
     font-size: 36px;
     font-weight: bold;
-    color: #00D8FF;
-    text-shadow: 0 0 8px rgba(0, 216, 255, 0.8);
+    color: #FF0000; /* Red */
+    text-shadow: 0 0 8px rgba(255, 0, 0, 0.8); /* Red glow */
     animation: glow 1.5s infinite alternate;
 }
 
@@ -76,7 +76,7 @@ header {
 .profile-menu .dropdown-menu {
     display: none;
     position: absolute;
-    background-color: #2c2c2c;
+    background-color: #1A1A1A; /* Darker Black */
     min-width: 120px;
     border-radius: 5px;
     padding: 10px;
@@ -94,15 +94,15 @@ header {
     font-size: 16px;
     font-weight: bold;
     color: white;
-    border: 2px solid #00D8FF;
-    background-color: #00D8FF;
+    border: 2px solid #FF0000; /* Red border */
+    background-color: #FF0000; /* Red background */
     border-radius: 5px;
     transition: background-color 0.3s, color 0.3s;
 }
 
 .play-button:hover {
-    background-color: #003399;
-    border-color: #003399;
+    background-color: #8B0000; /* Darker Red */
+    border-color: #8B0000;
 }
 
 /* Content Sections */
@@ -114,8 +114,8 @@ section {
     padding: 40px;
     border-radius: 10px;
     margin: 20px auto;
-    background-color: #2c2c2c;
-    border: 2px solid #4B0082;
+    background-color: #1A1A1A; /* Darker Black */
+    border: 2px solid #FF0000; /* Red border */
 }
 
 /* Fade-in animation */
@@ -128,10 +128,10 @@ section {
 /* Animations */
 @keyframes glow {
     0% {
-        text-shadow: 0 0 8px rgba(0, 216, 255, 0.8);
+        text-shadow: 0 0 8px rgba(255, 0, 0, 0.8);
     }
     100% {
-        text-shadow: 0 0 16px rgba(0, 216, 255, 1);
+        text-shadow: 0 0 16px rgba(255, 0, 0, 1);
     }
 }
 
