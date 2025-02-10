@@ -76,5 +76,17 @@
             </section>
         </main>
     </div>
+
+    <script>
+        async function testAPI() {
+            try {
+                let response = await fetch('/api/test');
+                let data = await response.json();
+                document.getElementById('api-result').innerText = data.message;
+            } catch (error) {
+                document.getElementById('api-result').innerText = 'API request failed!';
+            }
+        }
+    </script>
 </body>
 </html>
