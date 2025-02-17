@@ -21,16 +21,9 @@ app.use('/games', express.static(path.join(__dirname, 'public', 'games')));
 app.use('/games/malware_maze', express.static(path.join(__dirname, 'public', 'games', 'malware_maze')));
 app.use('/games/phaser_game_1', express.static(path.join(__dirname, 'public', 'games', 'phaser_game_1')));
 
-// Create separate database connections
-const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+// MongoDB Connections
+const mainDB = mongoose.createConnection(process.env.MONGO_URI);
+const userDB = mongoose.createConnection(`${process.env.MONGO_USER_URI}?tls=true`); // Added `?tls=true`
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
