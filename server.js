@@ -26,6 +26,19 @@ const connectDB = async () => {
 
 connectDB();
 
+// Connect to MongoDB 
+const connect_userDB = async () => {
+  try {
+    await mongoose.connect(process.env.MONGO_USER_URI);
+    console.log('Connected to MongoDB');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+    process.exit(1); // Exit the process on DB failure
+  }
+};
+
+connect_userDB()
+
 // Route to homepage
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
