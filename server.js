@@ -6,42 +6,57 @@ const cors = require('cors');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Middleware
-app.use(express.json()); // For parsing JSON requests
-app.use(cors()); // For frontend requests
+app.use(express.json());
+app.use(cors());
 
-// Connect to MongoDB 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI);
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit the process on DB failure
-  }
-};
+// Serve static files
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
+app.use('/about', express.static(path.join(__dirname, 'public', 'about')));
+app.use('/contact', express.static(path.join(__dirname, 'public', 'contact')));
 
-connectDB();
+// Serve Games Homepage and Game Directories
+app.use('/games', express.static(path.join(__dirname, 'public', 'games')));
+app.use('/games/malware_maze', express.static(path.join(__dirname, 'public', 'games', 'malware_maze')));
+app.use('/games/phaser_game_1', express.static(path.join(__dirname, 'public', 'games', 'phaser_game_1')));
 
-// Connect to MongoDB 
-const connect_userDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_USER_URI);
-    console.log('Connected to MongoDB');
-  } catch (error) {
-    console.error('MongoDB connection error:', error);
-    process.exit(1); // Exit the process on DB failure
-  }
-};
+// Create separate database connections
+const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-connect_userDB()
+const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
-// Route to homepage
+// Handle database connection events
+mainDB.on('error', (error) => console.error('MainDB connection error:', error));
+userDB.on('error', (error) => console.error('UserDB connection error:', error));
+
+mainDB.once('open', () => console.log('Connected to Main MongoDB'));
+userDB.once('open', () => console.log('Connected to User MongoDB'));
+
+// Homepage Route
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Route to serve the Games Homepage
+app.get('/games', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'games', 'index.html'));
+});
+
+// Route to serve Malware Maze
+app.get('/games/malware_maze', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'games', 'malware_maze', 'index.html'));
+});
+
+// Route to serve Phaser Game 1
+app.get('/games/phaser_game_1', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'games', 'phaser_game_1', 'index.html'));
 });
 
 // Test API Endpoint
@@ -52,7 +67,7 @@ app.get('/api/test', (req, res) => {
 // Test Database Connection
 app.get('/api/db-test', async (req, res) => {
   try {
-    const collections = await mongoose.connection.db.listCollections().toArray();
+    const collections = await mainDB.db.listCollections().toArray();
     res.json({ message: 'Database connected!', collections });
   } catch (error) {
     res.status(500).json({ error: 'Database connection failed', details: error });
