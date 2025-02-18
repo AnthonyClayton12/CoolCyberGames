@@ -1,29 +1,26 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const MongoStore = require('connect-mongo');
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+// MongoDB Connections with TLS/SSL
+const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: false // Set to true only for testing
+});
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
-app.use('/about', express.static(path.join(__dirname, 'public', 'about')));
-app.use('/contact', express.static(path.join(__dirname, 'public', 'contact')));
-
-// Serve Games Homepage and Game Directories
-app.use('/games', express.static(path.join(__dirname, 'public', 'games')));
-app.use('/games/malware_maze', express.static(path.join(__dirname, 'public', 'games', 'malware_maze')));
-app.use('/games/phaser_game_1', express.static(path.join(__dirname, 'public', 'games', 'phaser_game_1')));
-
-// MongoDB Connections
-const mainDB = mongoose.createConnection(process.env.MONGO_URI);
-const userDB = mongoose.createConnection(`${process.env.MONGO_USER_URI}?tls=true`); // Added `?tls=true`
+const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: false // Set to true only for testing
+});
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
@@ -32,57 +29,197 @@ userDB.on('error', (error) => console.error('UserDB connection error:', error));
 mainDB.once('open', () => console.log('Connected to Main MongoDB'));
 userDB.once('open', () => console.log('Connected to User MongoDB'));
 
-// Homepage Route
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// User Schema and Model
+const userSchema = new mongoose.Schema({
+  googleId: { type: String, unique: true },
+  displayName: String,
+  email: { type: String, unique: true },
+  avatar: String,
+  createdAt: { type: Date, default: Date.now }
 });
 
-// Routes to privacy policy and TOS
-app.get('/privacy-policy', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'privacy-policy.html'));
+const User = userDB.model('User', userSchema);
+
+// Game Progress Schema and Model
+const gameProgressSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  gameId: String, // Identifier for the game (e.g., "malware_maze")
+  progress: { type: Number, default: 0 }, // Example: Level or score
+  achievements: [{ type: String }] // Example: ["completed_level_1", "high_score"]
 });
 
-app.get('/terms-of-service', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'terms-of-service.html'));
-});
+const GameProgress = userDB.model('GameProgress', gameProgressSchema);
 
-// Route to serve the Games Homepage
-app.get('/games', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'games', 'index.html'));
-});
-
-// Route to serve Malware Maze
-app.get('/games/malware_maze', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'games', 'malware_maze', 'index.html'));
-});
-
-// Route to serve Phaser Game 1
-app.get('/games/phaser_game_1', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'games', 'phaser_game_1', 'index.html'));
-});
-
-// Test API Endpoint
-app.get('/api/test', (req, res) => {
-  res.json({ message: 'API is working!' });
-});
-
-// Test Database Connection
-app.get('/api/db-test', async (req, res) => {
-  try {
-    const collections = await mainDB.db.listCollections().toArray();
-    res.json({ message: 'Database connected!', collections });
-  } catch (error) {
-    res.status(500).json({ error: 'Database connection failed', details: error });
+// Session Configuration
+const sessionStore = MongoStore.create({
+  mongoUrl: process.env.MONGO_USER_URI,
+  collectionName: 'sessions',
+  mongoOptions: {
+    tls: true,
+    tlsAllowInvalidCertificates: false
   }
 });
 
-// Handle unexpected errors
-process.on('unhandledRejection', (err) => {
-  console.error('Unhandled Promise Rejection:', err);
-  process.exit(1);
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
+    secure: process.env.NODE_ENV === 'production'
+  }
+}));
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Google OAuth Strategy
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      let user = await User.findOne({ googleId: profile.id });
+
+      if (!user) {
+        // Create a new user if they don't exist
+        user = new User({
+          googleId: profile.id,
+          displayName: profile.displayName,
+          email: profile.emails[0].value,
+          avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c')
+        });
+        await user.save();
+      }
+
+      // Return the user object
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
+  }
+));
+
+// Passport Serialization
+passport.serializeUser((user, done) => {
+  done(null, user.id);
 });
 
-// Start the server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err);
+  }
+});
+
+// Security Middleware
+app.use(cors({
+  origin: process.env.CLIENT_URL,
+  credentials: true
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Static File Serving
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/css', express.static(path.join(__dirname, 'public', 'css')));
+app.use('/about', express.static(path.join(__dirname, 'public', 'about')));
+app.use('/contact', express.static(path.join(__dirname, 'public', 'contact')));
+
+// Game Routes
+const serveGame = (gamePath) => (req, res) => 
+  res.sendFile(path.join(__dirname, 'public', 'games', gamePath, 'index.html'));
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/games', serveGame(''));
+app.get('/games/malware_maze', serveGame('malware_maze'));
+app.get('/games/phaser_game_1', serveGame('phaser_game_1'));
+
+// Auth Routes
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => res.redirect('/')
+);
+
+app.get('/auth/logout', (req, res) => {
+  req.logout();
+  res.redirect('/');
+});
+
+// User API Endpoints
+app.get('/api/user', (req, res) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
+  res.json({
+    id: req.user.id,
+    displayName: req.user.displayName,
+    email: req.user.email,
+    avatar: req.user.avatar
+  });
+});
+
+// Save Game Progress
+app.post('/api/save-progress', async (req, res) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
+
+  const { gameId, progress, achievements } = req.body;
+
+  try {
+    let gameProgress = await GameProgress.findOne({ userId: req.user.id, gameId });
+
+    if (!gameProgress) {
+      // Create a new entry if it doesn't exist
+      gameProgress = new GameProgress({ userId: req.user.id, gameId, progress, achievements });
+    } else {
+      // Update existing progress
+      gameProgress.progress = progress;
+      gameProgress.achievements = achievements;
+    }
+
+    await gameProgress.save();
+    res.json({ message: 'Progress saved!', gameProgress });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to save progress', details: err });
+  }
+});
+
+// Fetch Game Progress
+app.get('/api/progress', async (req, res) => {
+  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
+
+  const { gameId } = req.query;
+
+  try {
+    const gameProgress = await GameProgress.findOne({ userId: req.user.id, gameId });
+    res.json({ gameProgress });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch progress', details: err });
+  }
+});
+
+// Error Handling Middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
+
+// Start Server
+mainDB.once('open', () => {
+  userDB.once('open', () => {
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+      console.log(`Main DB: ${mainDB.name}`);
+      console.log(`User DB: ${userDB.name}`);
+    });
+  });
 });
