@@ -37,6 +37,15 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// Routes to privacy policy and TOS
+app.get('/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'privacy-policy.html'));
+});
+
+app.get('/terms-of-service', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'terms-of-service.html'));
+});
+
 // Route to serve the Games Homepage
 app.get('/games', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'games', 'index.html'));
