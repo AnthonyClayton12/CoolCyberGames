@@ -1,4 +1,3 @@
-require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -7,11 +6,15 @@ const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const MongoStore = require('connect-mongo');
+const morgan = require('morgan'); // Optional: For logging
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
+// ✅ Logging (Optional)
+app.use(morgan('dev'));
+
+// ✅ MongoDB Connections with TLS/SSL
 const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
   tls: true,
   tlsAllowInvalidCertificates: false // Set to true only for testing
@@ -40,9 +43,12 @@ const userSchema = new mongoose.Schema({
 const User = userDB.model('User', userSchema);
 
 // ✅ Secure Session Configuration
-if (!process.env.SESSION_SECRET) {
-  console.error("⚠️ SESSION_SECRET is not set. Please define it in your environment variables.");
-  process.exit(1);
+const requiredEnvVars = ['SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`⚠️ ${envVar} is not set. Please define it in your environment variables.`);
+    process.exit(1);
+  }
 }
 
 const sessionStore = MongoStore.create({
