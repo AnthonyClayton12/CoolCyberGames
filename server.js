@@ -53,7 +53,7 @@ app.use(session({
   store: sessionStore,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: process.env.NODE_ENV === 'production'
+    secure: process.env.NODE_ENV === 'production' // Set to false in development
   }
 }));
 
@@ -171,11 +171,12 @@ app.get('/user/profile', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'profile.html'));
 });
 
-app.get('/user/privacy-policy', (req, res) => {
+// ✅ Fix Privacy Policy and Terms of Service Routes
+app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'privacy-policy.html'));
 });
 
-app.get('/user/terms-of-service', (req, res) => {
+app.get('/terms-of-service', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'terms-of-service.html'));
 });
 
