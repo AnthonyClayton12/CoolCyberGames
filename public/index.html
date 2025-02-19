@@ -49,6 +49,23 @@
         .show {
             display: block;
         }
+
+        /* Login Button Styles */
+        .login-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -64,13 +81,16 @@
     </div>
 
     <!-- Account Dropdown -->
-    <div class="account-dropdown" id="accountDropdown">
+    <div class="account-dropdown" id="accountDropdown" style="display: none;">
         <img id="userAvatar" src="https://via.placeholder.com/40" alt="User Avatar">
         <span id="userName">Guest</span>
         <div class="dropdown-content" id="dropdownContent">
             <a href="/auth/logout">Log Out</a>
         </div>
     </div>
+
+    <!-- Login Button -->
+    <button class="login-button" id="loginButton">Login with Google</button>
 
     <!-- Main Container -->
     <div class="container">
@@ -107,8 +127,16 @@
                 // Update Avatar and Name
                 document.getElementById('userAvatar').src = user.avatar || 'https://via.placeholder.com/40';
                 document.getElementById('userName').textContent = user.displayName || 'Guest';
+
+                // Show Account Dropdown and Hide Login Button
+                document.getElementById('accountDropdown').style.display = 'flex';
+                document.getElementById('loginButton').style.display = 'none';
             } catch (error) {
                 console.error('Failed to fetch user data:', error);
+
+                // Show Login Button and Hide Account Dropdown
+                document.getElementById('accountDropdown').style.display = 'none';
+                document.getElementById('loginButton').style.display = 'block';
             }
         }
 
@@ -124,6 +152,11 @@
             if (!event.target.matches('.account-dropdown *')) {
                 dropdownContent.classList.remove('show');
             }
+        });
+
+        // Redirect to Login Page
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.location.href = '/user/login';
         });
 
         // Fetch User Data on Page Load
