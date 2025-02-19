@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -11,8 +12,15 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
-const mainDB = mongoose.createConnection(process.env.MONGO_URI);
-const userDB = mongoose.createConnection(process.env.MONGO_USER_URI);
+const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: false // Set to true only for testing
+});
+
+const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
+  tls: true,
+  tlsAllowInvalidCertificates: false // Set to true only for testing
+});
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
@@ -39,7 +47,11 @@ if (!process.env.SESSION_SECRET) {
 
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_USER_URI,
-  collectionName: 'sessions'
+  collectionName: 'sessions',
+  mongoOptions: {
+    tls: true,
+    tlsAllowInvalidCertificates: false
+  }
 });
 
 app.use(session({
@@ -49,7 +61,9 @@ app.use(session({
   store: sessionStore,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: process.env.NODE_ENV === 'production'
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'lax'
   }
 }));
 
