@@ -5,6 +5,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Account Dropdown Styles */
+        .account-dropdown {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .account-dropdown img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            display: block;
+            padding: 10px 20px;
+            color: #333;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        .show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <!-- Sidebar -->
@@ -12,10 +57,20 @@
         <h2>Menu</h2>
         <ul>
             <li><a href="/">Home</a></li>
-            <li><a href="/games/">Games</a></li> <!-- Updated link to game selection -->
+            <li><a href="/games/">Games</a></li>
             <li><a href="/about/index.html">About</a></li>
             <li><a href="/contact/index.html">Contact</a></li>
         </ul>
+    </div>
+
+    <!-- Account Dropdown -->
+    <div class="account-dropdown" id="accountDropdown">
+        <img id="userAvatar" src="https://via.placeholder.com/40" alt="User Avatar">
+        <span id="userName">Guest</span>
+        <div class="dropdown-content" id="dropdownContent">
+            <a href="/profile">Profile & Achievements</a>
+            <a href="/auth/logout">Log Out</a>
+        </div>
     </div>
 
     <!-- Main Container -->
@@ -30,7 +85,7 @@
         <div class="content-box">
             <h2>Test the API</h2>
             <p>Click the button below to test the API connection.</p>
-            <a href="/api/test">Test API</a> <!-- Fixed the closing tag -->
+            <a href="/api/test">Test API</a>
             <p id="api-result"></p>
         </div>
 
@@ -38,10 +93,42 @@
         <div class="content-box">
             <h2>Play Now!</h2>
             <p>Ready to dive into the fun? Click below to choose a game.</p>
-            <a href="/games/" class="play-button">Choose a Game</a> <!-- Updated to point to game selection -->
+            <a href="/games/" class="play-button">Choose a Game</a>
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <script>
+        // Fetch User Data
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user');
+                if (!response.ok) throw new Error('Not authenticated');
+                const user = await response.json();
+
+                // Update Avatar and Name
+                document.getElementById('userAvatar').src = user.avatar || 'https://via.placeholder.com/40';
+                document.getElementById('userName').textContent = user.displayName || 'Guest';
+            } catch (error) {
+                console.error('Failed to fetch user data:', error);
+            }
+        }
+
+        // Toggle Dropdown
+        document.getElementById('accountDropdown').addEventListener('click', () => {
+            const dropdownContent = document.getElementById('dropdownContent');
+            dropdownContent.classList.toggle('show');
+        });
+
+        // Close Dropdown When Clicking Outside
+        window.addEventListener('click', (event) => {
+            const dropdownContent = document.getElementById('dropdownContent');
+            if (!event.target.matches('.account-dropdown *')) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+
+        // Fetch User Data on Page Load
+        fetchUserData();
+    </script>
 </body>
 </html>
