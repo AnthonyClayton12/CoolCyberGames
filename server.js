@@ -10,25 +10,18 @@ const MongoStore = require('connect-mongo');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// MongoDB Connections with TLS/SSL
-const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
-  tls: true,
-  tlsAllowInvalidCertificates: false // Set to true only for testing
-});
-
-const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
-  tls: true,
-  tlsAllowInvalidCertificates: false // Set to true only for testing
-});
+// ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
+const mainDB = mongoose.createConnection(`${process.env.MONGO_URI}?retryWrites=true&w=majority&ssl=true`);
+const userDB = mongoose.createConnection(`${process.env.MONGO_USER_URI}?retryWrites=true&w=majority&ssl=true`);
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
 userDB.on('error', (error) => console.error('UserDB connection error:', error));
 
-mainDB.once('open', () => console.log('Connected to Main MongoDB'));
-userDB.once('open', () => console.log('Connected to User MongoDB'));
+mainDB.once('open', () => console.log('✅ Connected to Main MongoDB'));
+userDB.once('open', () => console.log('✅ Connected to User MongoDB'));
 
-// User Schema and Model
+// ✅ User Schema & Model (Scoped to userDB)
 const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true },
   displayName: String,
@@ -36,17 +29,17 @@ const userSchema = new mongoose.Schema({
   avatar: String,
   createdAt: { type: Date, default: Date.now }
 });
-
 const User = userDB.model('User', userSchema);
 
-// Session Configuration
+// ✅ Secure Session Configuration
+if (!process.env.SESSION_SECRET) {
+  console.error("⚠️ SESSION_SECRET is not set. Please define it in your environment variables.");
+  process.exit(1);
+}
+
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_USER_URI,
-  collectionName: 'sessions',
-  mongoOptions: {
-    tls: true,
-    tlsAllowInvalidCertificates: false
-  }
+  collectionName: 'sessions'
 });
 
 app.use(session({
@@ -60,11 +53,11 @@ app.use(session({
   }
 }));
 
-// Initialize Passport
+// ✅ Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Google OAuth Strategy
+// ✅ Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -75,7 +68,6 @@ passport.use(new GoogleStrategy({
       let user = await User.findOne({ googleId: profile.id });
 
       if (!user) {
-        // Create a new user if they don't exist
         user = new User({
           googleId: profile.id,
           displayName: profile.displayName,
@@ -85,7 +77,6 @@ passport.use(new GoogleStrategy({
         await user.save();
       }
 
-      // Return the user object
       done(null, user);
     } catch (err) {
       done(err);
@@ -93,7 +84,7 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Passport Serialization
+// ✅ Passport Serialization
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -107,7 +98,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// Security Middleware
+// ✅ Security Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
@@ -116,10 +107,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Static File Serving
+// ✅ Static File Serving
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Auth Routes
+// ✅ Auth Routes
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
@@ -129,12 +120,14 @@ app.get('/auth/google/callback',
   (req, res) => res.redirect('/')
 );
 
-app.get('/auth/logout', (req, res) => {
-  req.logout();
-  res.redirect('/');
+app.get('/auth/logout', (req, res, next) => {
+  req.logout((err) => {
+    if (err) return next(err);
+    res.redirect('/');
+  });
 });
 
-// User API Endpoints
+// ✅ User API Endpoints
 app.get('/api/user', (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
   res.json({
@@ -145,29 +138,32 @@ app.get('/api/user', (req, res) => {
   });
 });
 
-// Serve the Login Page
+// ✅ Serve Pages
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
 
-// Serve the Homepage
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Error Handling Middleware
+// ✅ Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Start Server
-mainDB.once('open', () => {
-  userDB.once('open', () => {
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-      console.log(`Main DB: ${mainDB.name}`);
-      console.log(`User DB: ${userDB.name}`);
-    });
+// ✅ Start Server Only After Databases Are Connected
+Promise.all([
+  new Promise((resolve) => mainDB.once('open', resolve)),
+  new Promise((resolve) => userDB.once('open', resolve))
+]).then(() => {
+  app.listen(port, () => {
+    console.log(`🚀 Server running on port ${port}`);
+    console.log(`📦 Main DB: ${mainDB.name}`);
+    console.log(`📦 User DB: ${userDB.name}`);
   });
+}).catch(err => {
+  console.error("❌ Failed to start server due to database connection issues:", err);
+  process.exit(1);
 });
