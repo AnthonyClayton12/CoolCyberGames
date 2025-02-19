@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Cool Cyber Games</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Profile Page Styles */
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .profile-header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+
+        .profile-header h2 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .profile-header p {
+            margin: 5px 0;
+            color: #666;
+        }
+
+        .logout-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #ff1a1a;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/games/">Games</a></li>
+            <li><a href="/about/index.html">About</a></li>
+            <li><a href="/contact/index.html">Contact</a></li>
+        </ul>
+    </div>
+
+    <!-- Profile Container -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <img id="profileAvatar" src="https://via.placeholder.com/100" alt="User Avatar">
+            <h2 id="profileName">Guest</h2>
+            <p id="profileEmail">guest@example.com</p>
+        </div>
+
+        <!-- Log Out Button -->
+        <button class="logout-button" id="logoutButton">Log Out</button>
+    </div>
+
+    <script>
+        // Fetch User Data
+        async function fetchProfileData() {
+            try {
+                const response = await fetch('/api/user');
+                if (!response.ok) throw new Error('Failed to fetch user data');
+                const user = await response.json();
+
+                // Update Profile Header
+                document.getElementById('profileAvatar').src = user.avatar || 'https://via.placeholder.com/100';
+                document.getElementById('profileName').textContent = user.displayName || 'Guest';
+                document.getElementById('profileEmail').textContent = user.email || 'guest@example.com';
+            } catch (error) {
+                console.error('Failed to fetch profile data:', error);
+            }
+        }
+
+        // Log Out Functionality
+        document.getElementById('logoutButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/auth/logout', { method: 'GET' });
+                if (response.ok) {
+                    window.location.href = '/'; // Redirect to homepage after logout
+                } else {
+                    console.error('Failed to log out');
+                }
+            } catch (error) {
+                console.error('Error during logout:', error);
+            }
+        });
+
+        // Fetch Profile Data on Page Load
+        fetchProfileData();
+    </script>
+</body>
+</html>
