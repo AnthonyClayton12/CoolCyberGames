@@ -6,13 +6,9 @@ const session = require('express-session');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const MongoStore = require('connect-mongo');
-const morgan = require('morgan'); // Optional: For logging
 
 const app = express();
 const port = process.env.PORT || 3000;
-
-// ✅ Logging (Optional)
-app.use(morgan('dev'));
 
 // ✅ MongoDB Connections with TLS/SSL
 const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
