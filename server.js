@@ -140,6 +140,11 @@ app.get('/auth/google/callback',
   (req, res) => res.redirect('/')
 );
 
+app.get('/profile', (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/login');
+    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
+});
+
 app.get('/auth/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) return next(err);
