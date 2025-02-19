@@ -11,8 +11,8 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
-const mainDB = mongoose.createConnection(`${process.env.MONGO_URI}?retryWrites=true&w=majority&ssl=true`);
-const userDB = mongoose.createConnection(`${process.env.MONGO_USER_URI}?retryWrites=true&w=majority&ssl=true`);
+const mainDB = mongoose.createConnection({process.env.MONGO_URI});
+const userDB = mongoose.createConnection({process.env.MONGO_USER_URI});
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
