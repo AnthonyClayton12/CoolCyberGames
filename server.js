@@ -10,16 +10,18 @@ const MongoStore = require('connect-mongo');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ MongoDB Connections with TLS/SSL
-const mainDB = mongoose.createConnection(process.env.MONGO_URI, {
-  tls: true,
-  tlsAllowInvalidCertificates: false // Set to true only for testing
-});
+// ✅ Check for required environment variables
+const requiredEnvVars = ['MONGO_URI', 'MONGO_USER_URI', 'SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL', 'CLIENT_URL'];
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`⚠️ ${envVar} is not set. Please define it in your environment variables.`);
+    process.exit(1);
+  }
+}
 
-const userDB = mongoose.createConnection(process.env.MONGO_USER_URI, {
-  tls: true,
-  tlsAllowInvalidCertificates: false // Set to true only for testing
-});
+// ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
+const mainDB = mongoose.createConnection(process.env.MONGO_URI);
+const userDB = mongoose.createConnection(process.env.MONGO_USER_URI);
 
 // Handle database connection events
 mainDB.on('error', (error) => console.error('MainDB connection error:', error));
@@ -39,21 +41,9 @@ const userSchema = new mongoose.Schema({
 const User = userDB.model('User', userSchema);
 
 // ✅ Secure Session Configuration
-const requiredEnvVars = ['SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'];
-for (const envVar of requiredEnvVars) {
-  if (!process.env[envVar]) {
-    console.error(`⚠️ ${envVar} is not set. Please define it in your environment variables.`);
-    process.exit(1);
-  }
-}
-
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_USER_URI,
-  collectionName: 'sessions',
-  mongoOptions: {
-    tls: true,
-    tlsAllowInvalidCertificates: false
-  }
+  collectionName: 'sessions'
 });
 
 app.use(session({
@@ -63,9 +53,7 @@ app.use(session({
   store: sessionStore,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: process.env.NODE_ENV === 'production',
-    httpOnly: true,
-    sameSite: 'lax'
+    secure: process.env.NODE_ENV === 'production'
   }
 }));
 
@@ -132,14 +120,9 @@ app.get('/auth/google',
 );
 
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google', { failureRedirect: '/user/login' }),
   (req, res) => res.redirect('/')
 );
-
-app.get('/profile', (req, res) => {
-    if (!req.isAuthenticated()) return res.redirect('/login');
-    res.sendFile(path.join(__dirname, 'public', 'profile.html'));
-});
 
 app.get('/auth/logout', (req, res, next) => {
   req.logout((err) => {
@@ -160,12 +143,40 @@ app.get('/api/user', (req, res) => {
 });
 
 // ✅ Serve Pages
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'login.html'));
-});
-
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'about', 'index.html'));
+});
+
+app.get('/contact', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'contact', 'index.html'));
+});
+
+app.get('/games/malware_maze', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'games', 'malware_maze', 'index.html'));
+});
+
+app.get('/games/phaser_game_1', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'games', 'phaser_game_1', 'index.html'));
+});
+
+app.get('/user/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'user', 'login.html'));
+});
+
+app.get('/user/profile', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'user', 'profile.html'));
+});
+
+app.get('/user/privacy-policy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'user', 'privacy-policy.html'));
+});
+
+app.get('/user/terms-of-service', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'user', 'terms-of-service.html'));
 });
 
 // ✅ Error Handling Middleware
