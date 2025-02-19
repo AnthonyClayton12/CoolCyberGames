@@ -4,44 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Navigation -->
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <img src="/assets/logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <img src="/assets/ccg.png" alt="CCG Logo" style="height: 32px; width: 32px;">
                 <span>Cool Cyber Games</span>
             </a>
             <div class="navbar-links">
                 <a href="/" class="nav-link active">Home</a>
-                <a href="/games" class="nav-link">Games</a>
-                <a href="/about" class="nav-link">About</a>
-                <a href="/contact" class="nav-link">Contact</a>
+                <a href="/games/" class="nav-link">Games</a>
+                <a href="/" clas="nav-link">Dashboard</a>
+                <a href="/about/" class="nav-link">About</a>
+                <a href="/contact/" class="nav-link">Contact</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="main-container">
-        <h1 class="section-title">Featured Games</h1>
-        <div class="games-grid">
-            <div class="game-tile">
-                <img src="/api/placeholder/300/200" alt="Malware Maze" class="game-image">
-                <div class="game-content">
-                    <h3 class="game-title">Malware Maze</h3>
-                    <div class="game-difficulty difficulty-hard">Hard</div>
-                    <a href="/games/malware-maze" class="game-button">Play Now</a>
-                </div>
-            </div>
-            <!-- Add more game tiles as needed -->
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">
+                Welcome to 
+                <span class="gradient-text animate-pulse">Cool Cyber Games</span>
+            </h1>
+            <p class="welcome-description">
+                Embark on an epic journey through our cybersecurity challenges. 
+                Learn, compete, and become a master of digital defense through 
+                interactive gameplay and real-world scenarios.
+            </p>
+            <button class="start-button animate-bounce">
+                Start Your Journey
+            </button>
         </div>
+
+        <!-- Featured Games Section -->
+        <section class="featured-section">
+            <h2 class="section-title">Featured Games</h2>
+            <div class="games-grid">
+                <!-- Games will be populated by JavaScript -->
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/games">Games</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
             <div class="footer-section">
                 <h3>About</h3>
                 <ul class="footer-links">
@@ -56,7 +79,19 @@
                     <li><a href="/terms">Terms of Service</a></li>
                 </ul>
             </div>
+            <div class="footer-section">
+                <h3>Social</h3>
+                <ul class="footer-links">
+                    <li><a href="https://twitter.com/coolcybergames">Twitter</a></li>
+                    <li><a href="https://github.com/coolcybergames">GitHub</a></li>
+                    <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+                </ul>
+            </div>
         </div>
     </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
