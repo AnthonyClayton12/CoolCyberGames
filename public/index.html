@@ -7,41 +7,56 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Menu</h2>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/games/">Games</a></li> <!-- Updated link to game selection -->
-            <li><a href="/about/index.html">About</a></li>
-            <li><a href="/contact/index.html">Contact</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>Welcome to Cool Cyber Games! 🎮</h1>
-            <p>Interactive games & puzzles to learn cybersecurity!</p>
-        </header>
-
-        <!-- Content Box 1 -->
-        <div class="content-box">
-            <h2>Test the API</h2>
-            <p>Click the button below to test the API connection.</p>
-            <a href="/api/test">Test API</a> <!-- Fixed the closing tag -->
-            <p id="api-result"></p>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/assets/logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <span>Cool Cyber Games</span>
+            </a>
+            <div class="navbar-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/games" class="nav-link">Games</a>
+                <a href="/about" class="nav-link">About</a>
+                <a href="/contact" class="nav-link">Contact</a>
+            </div>
         </div>
+    </nav>
 
-        <!-- Content Box 2 -->
-        <div class="content-box">
-            <h2>Play Now!</h2>
-            <p>Ready to dive into the fun? Click below to choose a game.</p>
-            <a href="/games/" class="play-button">Choose a Game</a> <!-- Updated to point to game selection -->
+    <!-- Main Content -->
+    <main class="main-container">
+        <h1 class="section-title">Featured Games</h1>
+        <div class="games-grid">
+            <div class="game-tile">
+                <img src="/api/placeholder/300/200" alt="Malware Maze" class="game-image">
+                <div class="game-content">
+                    <h3 class="game-title">Malware Maze</h3>
+                    <div class="game-difficulty difficulty-hard">Hard</div>
+                    <a href="/games/malware-maze" class="game-button">Play Now</a>
+                </div>
+            </div>
+            <!-- Add more game tiles as needed -->
         </div>
-    </div>
+    </main>
 
-    <script src="js/script.js"></script>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul class="footer-links">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
