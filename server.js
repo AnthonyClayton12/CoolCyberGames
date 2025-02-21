@@ -51,7 +51,7 @@ app.use(session({
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24,
+    maxAge: 1000 * 60 * 60 * 24, // 1 day
     secure: process.env.NODE_ENV === 'production',
     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
     httpOnly: true
@@ -108,27 +108,32 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-app.get('/api/test', (req, res) => {
-    res.json({
-        status: 'API operational',
-        timestamp: new Date().toISOString(),
-        user: req.isAuthenticated() ? req.user.id : 'anonymous'
-    });
-});
-
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/user/login' }),
-  (req, res) => res.redirect('/') // Redirect to home after login
+  passport.authenticate('google', { 
+    failureRedirect: '/user/login',
+    successRedirect: '/'
+  })
 );
 
 app.get('/auth/logout', (req, res) => {
-  req.logout(() => res.redirect('/'));
+  req.logout((err) => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).send('Logout failed');
+    }
+    req.session.destroy(() => {
+      res.clearCookie('connect.sid');
+      res.redirect('/');
+    });
+  });
 });
 
 app.get('/api/user', (req, res) => {
-  if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
+  if (!req.isAuthenticated()) {
+    return res.status(401).json({ error: 'Not authenticated' });
+  }
   res.json({
     id: req.user.id,
     displayName: req.user.displayName,
