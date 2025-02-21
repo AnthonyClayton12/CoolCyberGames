@@ -10,27 +10,27 @@ const MongoStore = require('connect-mongo');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Check for required environment variables
+// Check for required environment variables
 const requiredEnvVars = ['MONGO_GAME_URI', 'MONGO_USER_URI', 'SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
-    console.error(`⚠️ ${envVar} is not set. Please define it in your environment variables.`);
+    console.error(`${envVar} is not set. Please define it in your environment variables.`);
     process.exit(1);
   }
 }
 
-// ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
-const mainDB = mongoose.createConnection(process.env.MONGO_GAME_URI);
+// MongoDB Connections with TLS/SSL & Error Handling
+const gameDB = mongoose.createConnection(process.env.MONGO_GAME_URI);
 const userDB = mongoose.createConnection(process.env.MONGO_USER_URI);
 
 // Handle database connection events
-mainDB.on('error', (error) => console.error('MainDB connection error:', error));
+gameDB.on('error', (error) => console.error('GameDB connection error:', error));
 userDB.on('error', (error) => console.error('UserDB connection error:', error));
 
-mainDB.once('open', () => console.log('✅ Connected to Main MongoDB'));
-userDB.once('open', () => console.log('✅ Connected to User MongoDB'));
+gameDB.once('open', () => console.log('Connected to Game MongoDB'));
+userDB.once('open', () => console.log('Connected to User MongoDB'));
 
-// ✅ User Schema & Model (Scoped to userDB)
+// User Schema & Model (Scoped to userDB)
 const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true },
   displayName: String,
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = userDB.model('User', userSchema);
 
-// ✅ Secure Session Configuration
+// Secure Session Configuration
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_USER_URI,
   collectionName: 'sessions'
@@ -57,11 +57,11 @@ app.use(session({
   }
 }));
 
-// ✅ Initialize Passport
+// Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ✅ Google OAuth Strategy
+// Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -88,7 +88,7 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// ✅ Passport Serialization
+// Passport Serialization
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -102,7 +102,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// ✅ Security Middleware
+// Security Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
@@ -111,10 +111,10 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ Static File Serving
+// Static File Serving
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ Auth Routes
+// Auth Routes
 app.get('/auth/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
 );
@@ -131,7 +131,7 @@ app.get('/auth/logout', (req, res, next) => {
   });
 });
 
-// ✅ User API Endpoints
+// User API Endpoints
 app.get('/api/user', (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
   res.json({
@@ -142,7 +142,7 @@ app.get('/api/user', (req, res) => {
   });
 });
 
-// ✅ Serve Pages
+// Serve Pages
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
@@ -155,6 +155,7 @@ app.get('/contact', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'contact', 'index.html'));
 });
 
+// Game Routes
 app.get('/games/malware_maze', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'games', 'malware_maze', 'index.html'));
 });
@@ -163,6 +164,7 @@ app.get('/games/phaser_game_1', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'games', 'phaser_game_1', 'index.html'));
 });
 
+// User Routes
 app.get('/user/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'login.html'));
 });
@@ -171,7 +173,7 @@ app.get('/user/profile', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'profile.html'));
 });
 
-// ✅ Fix Privacy Policy and Terms of Service Routes
+// Privacy Policy and Terms of Service Routes
 app.get('/privacy-policy', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'privacy-policy.html'));
 });
@@ -180,23 +182,23 @@ app.get('/terms-of-service', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'user', 'terms-of-service.html'));
 });
 
-// ✅ Error Handling Middleware
+// Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// ✅ Start Server Only After Databases Are Connected
+// Start Server Only After Databases Are Connected
 Promise.all([
-  new Promise((resolve) => mainDB.once('open', resolve)),
+  new Promise((resolve) => gameDB.once('open', resolve)),
   new Promise((resolve) => userDB.once('open', resolve))
 ]).then(() => {
   app.listen(port, () => {
-    console.log(`🚀 Server running on port ${port}`);
-    console.log(`📦 Main DB: ${mainDB.name}`);
-    console.log(`📦 User DB: ${userDB.name}`);
+    console.log(`Server running on port ${port}`);
+    console.log(`Game DB: ${gameDB.name}`);
+    console.log(`User DB: ${userDB.name}`);
   });
 }).catch(err => {
-  console.error("❌ Failed to start server due to database connection issues:", err);
+  console.error("Failed to start server due to database connection issues:", err);
   process.exit(1);
 });
