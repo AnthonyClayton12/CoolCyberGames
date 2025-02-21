@@ -11,7 +11,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ Check for required environment variables
-const requiredEnvVars = ['MONGO_URI', 'MONGO_USER_URI', 'SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'];
+const requiredEnvVars = ['MONGO_GAME_URI', 'MONGO_USER_URI', 'SESSION_SECRET', 'GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET', 'GOOGLE_CALLBACK_URL'];
 for (const envVar of requiredEnvVars) {
   if (!process.env[envVar]) {
     console.error(`⚠️ ${envVar} is not set. Please define it in your environment variables.`);
@@ -20,7 +20,7 @@ for (const envVar of requiredEnvVars) {
 }
 
 // ✅ MongoDB Connections with TLS/SSL & Improved Error Handling
-const mainDB = mongoose.createConnection(process.env.MONGO_URI);
+const mainDB = mongoose.createConnection(process.env.MONGO_GAME_URI);
 const userDB = mongoose.createConnection(process.env.MONGO_USER_URI);
 
 // Handle database connection events
