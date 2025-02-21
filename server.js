@@ -53,7 +53,8 @@ app.use(session({
   cookie: {
     maxAge: 1000 * 60 * 60 * 24,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    httpOnly: true
   }
 }));
 
@@ -74,7 +75,8 @@ passport.use(new GoogleStrategy({
           googleId: profile.id,
           displayName: profile.displayName,
           email: profile.emails[0].value,
-          avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c')
+          avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c'),
+          createdAt: new Date()
         });
         await user.save();
       }
@@ -110,7 +112,7 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'em
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/user/login' }),
-  (req, res) => res.redirect('/user/profile')
+  (req, res) => res.redirect('/') // Redirect to home after login
 );
 
 app.get('/auth/logout', (req, res) => {
