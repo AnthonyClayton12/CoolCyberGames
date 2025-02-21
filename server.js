@@ -108,6 +108,14 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
+app.get('/api/test', (req, res) => {
+    res.json({
+        status: 'API operational',
+        timestamp: new Date().toISOString(),
+        user: req.isAuthenticated() ? req.user.id : 'anonymous'
+    });
+});
+
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
