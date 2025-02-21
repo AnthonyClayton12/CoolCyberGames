@@ -94,6 +94,7 @@ button {
     cursor: pointer;
     border-radius: 5px;
     margin-top: 10px;
+    transition: background-color 0.3s;
 }
 
 button:hover {
@@ -131,6 +132,7 @@ button:hover {
     display: flex;
     align-items: center;
     cursor: pointer;
+    transition: opacity 0.3s;
 }
 
 .account-dropdown img {
@@ -138,6 +140,7 @@ button:hover {
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
+    border: 2px solid #4B0082; /* Dark Purple – Highlights */
 }
 
 .dropdown-content {
@@ -150,6 +153,9 @@ button:hover {
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     z-index: 1;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s, transform 0.3s;
 }
 
 .dropdown-content a {
@@ -157,6 +163,7 @@ button:hover {
     padding: 10px 20px;
     color: #E0E0E0; /* Light Gray – Secondary text */
     text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .dropdown-content a:hover {
@@ -164,8 +171,10 @@ button:hover {
     color: #00D8FF; /* Light Blue – Primary accents */
 }
 
-.show {
+.dropdown-content.show {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Login Button Styles */
@@ -180,9 +189,54 @@ button:hover {
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, opacity 0.3s;
 }
 
 .login-button:hover {
     background-color: #003399; /* Slightly darker Light Blue */
+}
+
+/* Profile Page Styles */
+.profile-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #2c2c2c; /* Slightly lighter Charcoal Gray */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    text-align: center;
+}
+
+.profile-header img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 2px solid #4B0082; /* Dark Purple – Highlights */
+}
+
+.profile-header h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #00D8FF; /* Light Blue – Primary accents */
+}
+
+.profile-header p {
+    margin: 5px 0;
+    color: #E0E0E0; /* Light Gray – Secondary text */
+}
+
+.logout-button {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #FF6900; /* Cyber Orange – Alerts, warnings */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.logout-button:hover {
+    background-color: #cc5500; /* Slightly darker Cyber Orange */
 }
