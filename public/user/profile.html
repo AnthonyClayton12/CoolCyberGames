@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Cool Cyber Games</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .profile-container {
+            background-color: #2c2c2c;
+            border: 2px solid #4B0082;
+        }
+        .logout-button {
+            background-color: #FF6900;
+            transition: background-color 0.3s;
+        }
+        .logout-button:hover {
+            background-color: #cc5500;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>Menu</h2>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/games/">Games</a></li>
+            <li><a href="/about">About</a></li>
+            <li><a href="/contact">Contact</a></li>
+        </ul>
+    </div>
+
+    <div class="profile-container">
+        <div class="profile-header">
+            <img id="profileAvatar" src="https://via.placeholder.com/100" alt="User Avatar">
+            <h2 id="profileName">Guest</h2>
+            <p id="profileEmail">guest@example.com</p>
+        </div>
+        <button class="logout-button" id="logoutButton">Log Out</button>
+    </div>
+<script>
+    async function fetchProfileData() {
+        try {
+            const response = await fetch('/api/user', { credentials: 'include' });
+            if (!response.ok) throw new Error('Not authenticated');
+            
+            const user = await response.json();
+            document.getElementById('profileAvatar').src = user.avatar;
+            document.getElementById('profileName').textContent = user.displayName;
+            document.getElementById('profileEmail').textContent = user.email;
+        } catch (error) {
+            console.error('Authentication error:', error);
+            window.location.href = '/user/login';
+        }
+    }
+</script>
+</body>
+</html>
