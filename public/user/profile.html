@@ -38,33 +38,21 @@
         </div>
         <button class="logout-button" id="logoutButton">Log Out</button>
     </div>
-
-    <script>
-        async function fetchProfileData() {
-            try {
-                const response = await fetch('/api/user', { credentials: 'include' });
-                if (!response.ok) throw new Error('Failed to fetch user data');
-                const user = await response.json();
-
-                document.getElementById('profileAvatar').src = user.avatar;
-                document.getElementById('profileName').textContent = user.displayName;
-                document.getElementById('profileEmail').textContent = user.email;
-            } catch (error) {
-                console.error('Failed to fetch profile data:', error);
-                window.location.href = '/user/login';
-            }
+<script>
+    async function fetchProfileData() {
+        try {
+            const response = await fetch('/api/user', { credentials: 'include' });
+            if (!response.ok) throw new Error('Not authenticated');
+            
+            const user = await response.json();
+            document.getElementById('profileAvatar').src = user.avatar;
+            document.getElementById('profileName').textContent = user.displayName;
+            document.getElementById('profileEmail').textContent = user.email;
+        } catch (error) {
+            console.error('Authentication error:', error);
+            window.location.href = '/user/login';
         }
-
-        document.getElementById('logoutButton').addEventListener('click', async () => {
-            try {
-                await fetch('/auth/logout', { credentials: 'include' });
-                window.location.href = '/';
-            } catch (error) {
-                console.error('Logout failed:', error);
-            }
-        });
-
-        fetchProfileData();
-    </script>
+    }
+</script>
 </body>
 </html>
