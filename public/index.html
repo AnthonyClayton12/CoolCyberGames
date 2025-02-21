@@ -4,111 +4,206 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
     <style>
+        /* Add these styles to your style.css */
+        .auth-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: auto;
+        }
+
+        .account-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .account-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #00D8FF;
+        }
+
         .dropdown-content {
-            opacity: 0;
-            transform: translateY(-10px);
+            display: none;
+            position: absolute;
+            top: 50px;
+            right: 0;
+            background-color: #1E1E1E;
+            border: 1px solid #4B0082;
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 160px;
+            z-index: 1000;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            color: #E0E0E0;
+            text-decoration: none;
+            display: block;
             transition: all 0.3s ease;
         }
-        .dropdown-content.show {
-            opacity: 1;
-            transform: translateY(0);
+
+        .dropdown-item:hover {
+            background-color: #4B0082;
+            color: #00D8FF;
+        }
+
+        .login-button {
+            background-color: #00D8FF;
+            color: #1E1E1E;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .login-button:hover {
+            background-color: #003399;
+        }
+
+        .api-test-section {
+            margin: 40px 0;
+            padding: 20px;
+            background: #2c2c2c;
+            border-radius: 12px;
+            border: 2px solid #4B0082;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2>Menu</h2>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/games/">Games</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/contact">Contact</a></li>
-        </ul>
-    </div>
-
-    <div class="account-dropdown" id="accountDropdown" style="display: none;">
-        <img id="userAvatar" src="https://via.placeholder.com/40" alt="User Avatar">
-        <span id="userName">Guest</span>
-        <div class="dropdown-content" id="dropdownContent">
-            <a href="/user/profile">Profile</a>
-            <a href="/auth/logout">Log Out</a>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/assets/ccg.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <span>Cool Cyber Games</span>
+            </a>
+            <div class="navbar-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/games/" class="nav-link">Games</a>
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/about/" class="nav-link">About</a>
+                <a href="/contact/" class="nav-link">Contact</a>
+                
+                <!-- Auth Section -->
+                <div class="auth-section">
+                    <div class="account-dropdown" id="accountDropdown" style="display: none;">
+                        <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="/user/profile" class="dropdown-item">Profile</a>
+                            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                    <button class="login-button" id="loginButton">Login with Google</button>
+                </div>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <button class="login-button" id="loginButton">Login with Google</button>
-
-    <div class="container">
-        <header>
-            <h1>Welcome to Cool Cyber Games! 🎮</h1>
-            <p>Interactive games & puzzles to learn cybersecurity!</p>
-        </header>
-
-        <div class="content-box">
-            <h2>Test the API</h2>
-            <p>Click the button below to test the API connection.</p>
-            <button id="testApiButton" class="play-button">Test API</button>
-            <pre id="api-result" style="margin-top: 15px;"></pre>
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h1 class="welcome-title">
+                Welcome to 
+                <span class="gradient-text animate-pulse">Cool Cyber Games</span>
+            </h1>
+            <p class="welcome-description">
+                Embark on an epic journey through our cybersecurity challenges. 
+                Learn, compete, and become a master of digital defense through 
+                interactive gameplay and real-world scenarios.
+            </p>
+            <button class="start-button animate-bounce">
+                Start Your Journey
+            </button>
         </div>
 
-        <div class="content-box">
-            <h2>Play Now!</h2>
-            <p>Ready to dive into the fun? Click below to choose a game.</p>
-            <a href="/games/" class="play-button">Choose a Game</a>
-        </div>
-    </div>
+        <!-- API Test Section -->
+        <section class="api-test-section">
+            <h2 class="section-title">API Status Check</h2>
+            <div class="test-container">
+                <button id="testApiButton" class="play-button">Test API Connection</button>
+                <pre id="api-result" class="api-result"></pre>
+            </div>
+        </section>
+
+        <!-- Featured Games Section -->
+        <section class="featured-section">
+            <h2 class="section-title">Featured Games</h2>
+            <div class="games-grid">
+                <!-- Games will be populated by JavaScript -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <!-- ... keep existing footer content ... -->
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
     <script>
+        // Auth functionality
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user', { credentials: 'include' });
+                if (!response.ok) throw new Error('Not authenticated');
+                const user = await response.json();
+
+                document.getElementById('userAvatar').src = user.avatar;
+                document.getElementById('accountDropdown').style.display = 'flex';
+                document.getElementById('loginButton').style.display = 'none';
+            } catch (error) {
+                document.getElementById('accountDropdown').style.display = 'none';
+                document.getElementById('loginButton').style.display = 'block';
+            }
+        }
+
+        // Dropdown toggle
+        document.getElementById('accountDropdown').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('dropdownContent').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', () => {
+            document.getElementById('dropdownContent').classList.remove('show');
+        });
+
+        // Login handler
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        // API Test functionality
         document.getElementById('testApiButton').addEventListener('click', async () => {
             try {
-                const response = await fetch('/api/test', {
-                    method: 'GET',
-                    credentials: 'include'
-                });
+                const response = await fetch('/api/test', { credentials: 'include' });
                 const data = await response.json();
                 document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
             } catch (error) {
-                document.getElementById('api-result').textContent = 'API test failed: ' + error.message;
+                document.getElementById('api-result').textContent = 'Error: ' + error.message;
             }
         });
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+            fetchUserData();
+        });
     </script>
-   <script>
-    // Update the fetchUserData function
-    async function fetchUserData() {
-        try {
-            const response = await fetch('/api/user', {
-                credentials: 'include'
-            });
-            
-            if (!response.ok) throw new Error('Not authenticated');
-            
-            const user = await response.json();
-            
-            // Update UI elements
-            document.getElementById('userAvatar').src = user.avatar;
-            document.getElementById('userName').textContent = user.displayName;
-            
-            // Toggle visibility
-            document.getElementById('accountDropdown').style.display = 'flex';
-            document.getElementById('loginButton').style.display = 'none';
-        } catch (error) {
-            // Show login button if not authenticated
-            document.getElementById('accountDropdown').style.display = 'none';
-            document.getElementById('loginButton').style.display = 'block';
-        }
-    }
-
-    // Update login button handler
-    document.getElementById('loginButton').addEventListener('click', () => {
-        window.location.href = '/auth/google'; // Direct Google auth
-    });
-
-    // Add this to ensure fresh state on page load
-    window.addEventListener('load', () => {
-        fetchUserData();
-        // Clear any existing dropdown
-        document.getElementById('dropdownContent').classList.remove('show');
-    });
-</script>
 </body>
 </html>
