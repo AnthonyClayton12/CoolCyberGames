@@ -48,8 +48,8 @@
         <div class="content-box">
             <h2>Test the API</h2>
             <p>Click the button below to test the API connection.</p>
-            <a href="/api/test">Test API</a>
-            <p id="api-result"></p>
+            <button id="testApiButton" class="play-button">Test API</button>
+            <pre id="api-result" style="margin-top: 15px;"></pre>
         </div>
 
         <div class="content-box">
@@ -58,7 +58,20 @@
             <a href="/games/" class="play-button">Choose a Game</a>
         </div>
     </div>
-
+    <script>
+        document.getElementById('testApiButton').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/api/test', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                const data = await response.json();
+                document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('api-result').textContent = 'API test failed: ' + error.message;
+            }
+        });
+    </script>
    <script>
     // Update the fetchUserData function
     async function fetchUserData() {
