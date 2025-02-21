@@ -19,22 +19,17 @@ for (const envVar of requiredEnvVars) {
   }
 }
 
-// MongoDB Connections with TLS/SSL & Error Handling
+// MongoDB Connections
 const gameDB = mongoose.createConnection(process.env.MONGO_GAME_URI);
 const userDB = mongoose.createConnection(process.env.MONGO_USER_URI);
 
-// Handle database connection events
 gameDB.on('error', (error) => console.error('GameDB connection error:', error));
 userDB.on('error', (error) => console.error('UserDB connection error:', error));
 
 gameDB.once('open', () => console.log('Connected to Game MongoDB'));
 userDB.once('open', () => console.log('Connected to User MongoDB'));
 
-// ======================
-// User Database Schemas
-// ======================
-
-// User Schema & Model (Scoped to userDB)
+// User Schema
 const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true },
   displayName: String,
@@ -44,72 +39,7 @@ const userSchema = new mongoose.Schema({
 });
 const User = userDB.model('User', userSchema);
 
-// Session Schema & Model (Scoped to userDB)
-const sessionSchema = new mongoose.Schema({
-  _id: String,
-  expires: Date,
-  session: String
-});
-const Session = userDB.model('Session', sessionSchema);
-
-// ======================
-// Game Database Schemas
-// ======================
-
-// Game Schema & Model (Scoped to gameDB)
-const gameSchema = new mongoose.Schema({
-  gameId: { type: String, unique: true },
-  gameName: String,
-  description: String,
-  createdAt: { type: Date, default: Date.now }
-});
-const Game = gameDB.model('Game', gameSchema);
-
-// Game Progress Schema & Model (Scoped to gameDB)
-const gameProgressSchema = new mongoose.Schema({
-  progressId: { type: String, unique: true },
-  userId: { type: String, ref: 'User' }, // References User in userDB
-  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
-  level: Number,
-  score: Number,
-  lastPlayed: { type: Date, default: Date.now }
-});
-const GameProgress = gameDB.model('GameProgress', gameProgressSchema);
-
-// Achievement Schema & Model (Scoped to gameDB)
-const achievementSchema = new mongoose.Schema({
-  achievementId: { type: String, unique: true },
-  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
-  achievementName: String,
-  description: String
-});
-const Achievement = gameDB.model('Achievement', achievementSchema);
-
-// User Achievement Schema & Model (Scoped to gameDB)
-const userAchievementSchema = new mongoose.Schema({
-  userAchievementId: { type: String, unique: true },
-  userId: { type: String, ref: 'User' }, // References User in userDB
-  achievementId: { type: String, ref: 'Achievement' }, // References Achievement in gameDB
-  unlockedAt: { type: Date, default: Date.now }
-});
-const UserAchievement = gameDB.model('UserAchievement', userAchievementSchema);
-
-// Leaderboard Schema & Model (Scoped to gameDB)
-const leaderboardSchema = new mongoose.Schema({
-  leaderboardId: { type: String, unique: true },
-  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
-  userId: { type: String, ref: 'User' }, // References User in userDB
-  score: Number,
-  rank: Number,
-  updatedAt: { type: Date, default: Date.now }
-});
-const Leaderboard = gameDB.model('Leaderboard', leaderboardSchema);
-
-// ======================
 // Session Configuration
-// ======================
-
-// Secure Session Configuration
 const sessionStore = MongoStore.create({
   mongoUrl: process.env.MONGO_USER_URI,
   collectionName: 'sessions'
@@ -121,20 +51,16 @@ app.use(session({
   saveUninitialized: false,
   store: sessionStore,
   cookie: {
-    maxAge: 1000 * 60 * 60 * 24, // 1 day
-    secure: process.env.NODE_ENV === 'production' // Set to false in development
+    maxAge: 1000 * 60 * 60 * 24,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 
-// Initialize Passport
+// Passport Setup
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ======================
-// Passport Configuration
-// ======================
-
-// Google OAuth Strategy
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
@@ -143,7 +69,6 @@ passport.use(new GoogleStrategy({
   async (accessToken, refreshToken, profile, done) => {
     try {
       let user = await User.findOne({ googleId: profile.id });
-
       if (!user) {
         user = new User({
           googleId: profile.id,
@@ -153,7 +78,6 @@ passport.use(new GoogleStrategy({
         });
         await user.save();
       }
-
       done(null, user);
     } catch (err) {
       done(err);
@@ -161,11 +85,7 @@ passport.use(new GoogleStrategy({
   }
 ));
 
-// Passport Serialization
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
+passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -175,11 +95,7 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
-// ======================
 // Middleware
-// ======================
-
-// Security Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true
@@ -187,32 +103,20 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Static File Serving
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ======================
 // Routes
-// ======================
-
-// Auth Routes
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['profile', 'email'] })
-);
+app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/user/login' }),
-  (req, res) => res.redirect('/')
+  (req, res) => res.redirect('/user/profile')
 );
 
-app.get('/auth/logout', (req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    res.redirect('/');
-  });
+app.get('/auth/logout', (req, res) => {
+  req.logout(() => res.redirect('/'));
 });
 
-// User API Endpoints
 app.get('/api/user', (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ error: 'Not authenticated' });
   res.json({
@@ -223,56 +127,28 @@ app.get('/api/user', (req, res) => {
   });
 });
 
-// Serve Pages
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// Static Routes
+const serveStatic = (path) => (req, res) => res.sendFile(`${__dirname}/public/${path}`);
+app.get('/', serveStatic('index.html'));
+app.get('/about', serveStatic('about/index.html'));
+app.get('/contact', serveStatic('contact/index.html'));
+app.get('/games/malware_maze', serveStatic('games/malware_maze/index.html'));
+app.get('/games/phaser_game_1', serveStatic('games/phaser_game_1/index.html'));
+app.get('/user/login', serveStatic('user/login.html'));
+app.get('/user/profile', serveStatic('user/profile.html'));
+app.get('/privacy-policy', serveStatic('user/privacy-policy.html'));
+app.get('/terms-of-service', serveStatic('user/terms-of-service.html'));
 
-app.get('/about', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'about', 'index.html'));
-});
-
-app.get('/contact', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'contact', 'index.html'));
-});
-
-// Game Routes
-app.get('/games/malware_maze', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'games', 'malware_maze', 'index.html'));
-});
-
-app.get('/games/phaser_game_1', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'games', 'phaser_game_1', 'index.html'));
-});
-
-// User Routes
-app.get('/user/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'user', 'login.html'));
-});
-
-app.get('/user/profile', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'user', 'profile.html'));
-});
-
-// Privacy Policy and Terms of Service Routes
-app.get('/privacy-policy', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'user', 'privacy-policy.html'));
-});
-
-app.get('/terms-of-service', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'user', 'terms-of-service.html'));
-});
-
-// Error Handling Middleware
+// Error Handling
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({ error: 'Internal Server Error' });
 });
 
-// Start Server Only After Databases Are Connected
+// Start Server
 Promise.all([
-  new Promise((resolve) => gameDB.once('open', resolve)),
-  new Promise((resolve) => userDB.once('open', resolve))
+  new Promise(resolve => gameDB.once('open', resolve)),
+  new Promise(resolve => userDB.once('open', resolve))
 ]).then(() => {
   app.listen(port, () => {
     console.log(`Server running on port ${port}`);
@@ -280,6 +156,6 @@ Promise.all([
     console.log(`User DB: ${userDB.name}`);
   });
 }).catch(err => {
-  console.error("Failed to start server due to database connection issues:", err);
+  console.error("Failed to start server:", err);
   process.exit(1);
 });
