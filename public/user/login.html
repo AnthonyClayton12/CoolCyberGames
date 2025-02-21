@@ -23,11 +23,15 @@
     }
   </style>
   <script>
-    fetch('/api/user', { credentials: 'include' })
-      .then(response => {
-        if (response.ok) window.location.href = '/user/profile';
-      });
-  </script>
+    // Add immediate redirect check
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/user', { credentials: 'include' })
+            .then(response => {
+                if (response.ok) window.location.href = '/';
+            })
+            .catch(() => console.log('Not logged in'));
+    });
+</script>
 </head>
 <body>
   <div class="login-container">
