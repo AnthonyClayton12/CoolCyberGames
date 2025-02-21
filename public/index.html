@@ -4,83 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
-    <style>
-        /* Add these styles to your style.css */
-        .auth-section {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-left: auto;
-        }
-
-        .account-dropdown {
-            position: relative;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-        }
-
-        .account-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #00D8FF;
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            top: 50px;
-            right: 0;
-            background-color: #1E1E1E;
-            border: 1px solid #4B0082;
-            border-radius: 8px;
-            padding: 10px;
-            min-width: 160px;
-            z-index: 1000;
-        }
-
-        .dropdown-content.show {
-            display: block;
-        }
-
-        .dropdown-item {
-            padding: 10px;
-            color: #E0E0E0;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-item:hover {
-            background-color: #4B0082;
-            color: #00D8FF;
-        }
-
-        .login-button {
-            background-color: #00D8FF;
-            color: #1E1E1E;
-            padding: 10px 20px;
-            border-radius: 8px;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .login-button:hover {
-            background-color: #003399;
-        }
-
-        .api-test-section {
-            margin: 40px 0;
-            padding: 20px;
-            background: #2c2c2c;
-            border-radius: 12px;
-            border: 2px solid #4B0082;
-        }
-    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -134,7 +59,7 @@
         <section class="api-test-section">
             <h2 class="section-title">API Status Check</h2>
             <div class="test-container">
-                <button id="testApiButton" class="play-button">Test API Connection</button>
+                <button id="testApiButton" class="start-button">Test API Connection</button>
                 <pre id="api-result" class="api-result"></pre>
             </div>
         </section>
@@ -150,7 +75,40 @@
 
     <!-- Footer -->
     <footer class="footer">
-        <!-- ... keep existing footer content ... -->
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/games">Games</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul class="footer-links">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="/privacy">Privacy Policy</a></li>
+                    <li><a href="/terms">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Social</h3>
+                <ul class="footer-links">
+                    <li><a href="https://twitter.com/coolcybergames">Twitter</a></li>
+                    <li><a href="https://github.com/coolcybergames">GitHub</a></li>
+                    <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+                </ul>
+            </div>
+        </div>
     </footer>
 
     <!-- Scripts -->
