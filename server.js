@@ -30,6 +30,10 @@ userDB.on('error', (error) => console.error('UserDB connection error:', error));
 gameDB.once('open', () => console.log('Connected to Game MongoDB'));
 userDB.once('open', () => console.log('Connected to User MongoDB'));
 
+// ======================
+// User Database Schemas
+// ======================
+
 // User Schema & Model (Scoped to userDB)
 const userSchema = new mongoose.Schema({
   googleId: { type: String, unique: true },
@@ -39,6 +43,71 @@ const userSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 const User = userDB.model('User', userSchema);
+
+// Session Schema & Model (Scoped to userDB)
+const sessionSchema = new mongoose.Schema({
+  _id: String,
+  expires: Date,
+  session: String
+});
+const Session = userDB.model('Session', sessionSchema);
+
+// ======================
+// Game Database Schemas
+// ======================
+
+// Game Schema & Model (Scoped to gameDB)
+const gameSchema = new mongoose.Schema({
+  gameId: { type: String, unique: true },
+  gameName: String,
+  description: String,
+  createdAt: { type: Date, default: Date.now }
+});
+const Game = gameDB.model('Game', gameSchema);
+
+// Game Progress Schema & Model (Scoped to gameDB)
+const gameProgressSchema = new mongoose.Schema({
+  progressId: { type: String, unique: true },
+  userId: { type: String, ref: 'User' }, // References User in userDB
+  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
+  level: Number,
+  score: Number,
+  lastPlayed: { type: Date, default: Date.now }
+});
+const GameProgress = gameDB.model('GameProgress', gameProgressSchema);
+
+// Achievement Schema & Model (Scoped to gameDB)
+const achievementSchema = new mongoose.Schema({
+  achievementId: { type: String, unique: true },
+  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
+  achievementName: String,
+  description: String
+});
+const Achievement = gameDB.model('Achievement', achievementSchema);
+
+// User Achievement Schema & Model (Scoped to gameDB)
+const userAchievementSchema = new mongoose.Schema({
+  userAchievementId: { type: String, unique: true },
+  userId: { type: String, ref: 'User' }, // References User in userDB
+  achievementId: { type: String, ref: 'Achievement' }, // References Achievement in gameDB
+  unlockedAt: { type: Date, default: Date.now }
+});
+const UserAchievement = gameDB.model('UserAchievement', userAchievementSchema);
+
+// Leaderboard Schema & Model (Scoped to gameDB)
+const leaderboardSchema = new mongoose.Schema({
+  leaderboardId: { type: String, unique: true },
+  gameId: { type: String, ref: 'Game' }, // References Game in gameDB
+  userId: { type: String, ref: 'User' }, // References User in userDB
+  score: Number,
+  rank: Number,
+  updatedAt: { type: Date, default: Date.now }
+});
+const Leaderboard = gameDB.model('Leaderboard', leaderboardSchema);
+
+// ======================
+// Session Configuration
+// ======================
 
 // Secure Session Configuration
 const sessionStore = MongoStore.create({
@@ -60,6 +129,10 @@ app.use(session({
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
+
+// ======================
+// Passport Configuration
+// ======================
 
 // Google OAuth Strategy
 passport.use(new GoogleStrategy({
@@ -102,6 +175,10 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+// ======================
+// Middleware
+// ======================
+
 // Security Middleware
 app.use(cors({
   origin: process.env.CLIENT_URL,
@@ -113,6 +190,10 @@ app.use(express.urlencoded({ extended: true }));
 
 // Static File Serving
 app.use(express.static(path.join(__dirname, 'public')));
+
+// ======================
+// Routes
+// ======================
 
 // Auth Routes
 app.get('/auth/google',
