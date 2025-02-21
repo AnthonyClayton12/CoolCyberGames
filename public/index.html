@@ -59,38 +59,43 @@
         </div>
     </div>
 
-    <script>
-        async function fetchUserData() {
-            try {
-                const response = await fetch('/api/user', { credentials: 'include' });
-                if (!response.ok) throw new Error('Not authenticated');
-                const user = await response.json();
-
-                document.getElementById('userAvatar').src = user.avatar || 'https://via.placeholder.com/40';
-                document.getElementById('userName').textContent = user.displayName;
-                document.getElementById('accountDropdown').style.display = 'flex';
-                document.getElementById('loginButton').style.display = 'none';
-            } catch (error) {
-                document.getElementById('accountDropdown').style.display = 'none';
-                document.getElementById('loginButton').style.display = 'block';
-            }
+   <script>
+    // Update the fetchUserData function
+    async function fetchUserData() {
+        try {
+            const response = await fetch('/api/user', {
+                credentials: 'include'
+            });
+            
+            if (!response.ok) throw new Error('Not authenticated');
+            
+            const user = await response.json();
+            
+            // Update UI elements
+            document.getElementById('userAvatar').src = user.avatar;
+            document.getElementById('userName').textContent = user.displayName;
+            
+            // Toggle visibility
+            document.getElementById('accountDropdown').style.display = 'flex';
+            document.getElementById('loginButton').style.display = 'none';
+        } catch (error) {
+            // Show login button if not authenticated
+            document.getElementById('accountDropdown').style.display = 'none';
+            document.getElementById('loginButton').style.display = 'block';
         }
+    }
 
-        document.getElementById('accountDropdown').addEventListener('click', () => {
-            document.getElementById('dropdownContent').classList.toggle('show');
-        });
+    // Update login button handler
+    document.getElementById('loginButton').addEventListener('click', () => {
+        window.location.href = '/auth/google'; // Direct Google auth
+    });
 
-        window.addEventListener('click', (event) => {
-            if (!event.target.closest('.account-dropdown')) {
-                document.getElementById('dropdownContent').classList.remove('show');
-            }
-        });
-
-        document.getElementById('loginButton').addEventListener('click', () => {
-            window.location.href = '/auth/google';
-        });
-
+    // Add this to ensure fresh state on page load
+    window.addEventListener('load', () => {
         fetchUserData();
-    </script>
+        // Clear any existing dropdown
+        document.getElementById('dropdownContent').classList.remove('show');
+    });
+</script>
 </body>
 </html>
