@@ -145,6 +145,20 @@ app.get('/api/user', (req, res) => {
   }
 });
 
+app.get('/api/test', (req, res) => {
+  try {
+    // Example response
+    res.json({
+      status: 'API operational',
+      timestamp: new Date().toISOString(),
+      user: req.isAuthenticated() ? req.user.id : 'anonymous'
+    });
+  } catch (error) {
+    console.error('API test error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Static Routes
 const serveStatic = (path) => (req, res) => res.sendFile(`${__dirname}/public/${path}`);
 app.get('/', serveStatic('index.html'));
