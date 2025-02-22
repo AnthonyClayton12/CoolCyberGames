@@ -117,4 +117,135 @@ body {
     background-color: #003399;
 }
 
-/* ... rest of your existing CSS ... */
+/* Main Content */
+.main-container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+}
+
+.welcome-section {
+    text-align: center;
+    padding: 4rem 0;
+}
+
+.welcome-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #00D8FF, #4B0082);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.start-button {
+    background-color: #00D8FF;
+    color: #1E1E1E;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+}
+
+.start-button:hover {
+    background-color: #003399;
+}
+
+/* API Test Section */
+.api-test-section {
+    margin: 4rem 0;
+    padding: 2rem;
+    background: #2c2c2c;
+    border-radius: 12px;
+    border: 2px solid #4B0082;
+    text-align: center;
+}
+
+.api-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #1E1E1E;
+    border-radius: 8px;
+    white-space: pre-wrap;
+}
+
+/* Featured Games Section */
+.featured-section {
+    margin: 4rem 0;
+}
+
+.section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #00D8FF;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+/* Footer */
+.footer {
+    background-color: #1E1E1E;
+    padding: 2rem;
+    margin-top: 4rem;
+    border-top: 2px solid #4B0082;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.footer-section h3 {
+    color: #00D8FF;
+    margin-bottom: 1rem;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+    color: #E0E0E0;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #FF6900;
+}
+
+/* Animations */
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.animate-bounce {
+    animation: bounce 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1 }
+    50% { opacity: 0.5 }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0) }
+    50% { transform: translateY(-10px) }
+}
