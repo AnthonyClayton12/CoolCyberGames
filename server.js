@@ -65,24 +65,26 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: process.env.GOOGLE_CALLBACK_URL
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    passReqToCallback: true
   },
-  async (accessToken, refreshToken, profile, done) => {
+  async (req, accessToken, refreshToken, profile, done) => {
     try {
-      let user = await User.findOne({ googleId: profile.id });
-      if (!user) {
-        user = new User({
+      const existingUser = await User.findOne({ googleId: profile.id });
+      if (existingUser) {
+        return done(null, existingUser);
+      } else {
+        const newUser = new User({
           googleId: profile.id,
           displayName: profile.displayName,
           email: profile.emails[0].value,
-          avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c'),
-          createdAt: new Date()
+          avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c')
         });
-        await user.save();
+        await newUser.save();
+        return done(null, newUser);
       }
-      return done(null, user);
     } catch (err) {
-      return done(err, null);
+      return done(err);
     }
   }
 ));
@@ -114,35 +116,33 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 app.get('/auth/google/callback',
-  passport.authenticate('google', { 
-    failureRedirect: '/user/login',
-    successRedirect: '/'
-  })
-);
+  passport.authenticate('google', { failureRedirect: 'user/login', successRedirect: '/' }),
+    (req, res) => {
+      console.log("Successful Google authentication!");
+});
 
 app.get('/auth/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) {
-      console.error('Logout error:', err);
-      return res.status(500).send('Logout failed');
-    }
-    req.session.destroy(() => {
-      res.clearCookie('connect.sid');
+  req.logout(err => {
+    if (err) { return next(err); }
+    req.session.destroy(err => {
+      if (err) { return next(err); }
+      res.clearCookie('connect.sid'); 
       res.redirect('/');
     });
   });
 });
 
 app.get('/api/user', (req, res) => {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ error: 'Not authenticated' });
+  if (req.isAuthenticated()) {
+    res.json({
+      id: req.user.id,
+      displayName: req.user.displayName,
+      email: req.user.email,
+      avatar: req.user.avatar
+    });
+  } else {
+    res.status(401).json({ error: 'Not authenticated' });
   }
-  res.json({
-    id: req.user.id,
-    displayName: req.user.displayName,
-    email: req.user.email,
-    avatar: req.user.avatar
-  });
 });
 
 // Static Routes
