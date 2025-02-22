@@ -175,13 +175,20 @@
 
         // API Test functionality
         document.getElementById('testApiButton').addEventListener('click', async () => {
-            try {
-                const response = await fetch('/api/test', { credentials: 'include' });
-                const data = await response.json();
-                document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
-            } catch (error) {
-                document.getElementById('api-result').textContent = 'Error: ' + error.message;
-            }
+          try {
+            const response = await fetch('/api/test', { credentials: 'include' });
+            
+            // Log the response for debugging
+            const text = await response.text();
+            console.log('API Response:', text);
+        
+            // Try to parse the response as JSON
+            const data = JSON.parse(text);
+            document.getElementById('api-result').textContent = JSON.stringify(data, null, 2);
+          } catch (error) {
+            console.error('API Test Error:', error);
+            document.getElementById('api-result').textContent = 'Error: ' + error.message;
+          }
         });
     </script>
 </body>
