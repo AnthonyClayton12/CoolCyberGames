@@ -29,9 +29,12 @@
     "passport-google-oauth20": "^2.0.0",
     "connect-mongo": "^5.1.0",
     "mongodb": "^6.0.0",
-    "lucide": "^0.475.0",
+    "lucide": "^0.263.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
