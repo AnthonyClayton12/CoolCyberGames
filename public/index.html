@@ -26,6 +26,7 @@
                 <div class="auth-section">
                     <div class="account-dropdown" id="accountDropdown" style="display: none;">
                         <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+                        <span id="userName"></span>
                         <div class="dropdown-content" id="dropdownContent">
                             <a href="/user/profile" class="dropdown-item">Profile</a>
                             <a href="/auth/logout" class="dropdown-item">Log Out</a>
@@ -96,8 +97,8 @@
             <div class="footer-section">
                 <h3>Legal</h3>
                 <ul class="footer-links">
-                    <li><a href="/privacy">Privacy Policy</a></li>
-                    <li><a href="/terms">Terms of Service</a></li>
+                    <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="user/terms-of-service.html">Terms of Service</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -117,20 +118,51 @@
         // Auth functionality
         async function fetchUserData() {
             try {
-                const response = await fetch('/api/user', { credentials: 'include' });
+                const response = await fetch('/api/user', {
+                    credentials: 'include'
+                });
+                
                 if (!response.ok) throw new Error('Not authenticated');
+                
                 const user = await response.json();
-
-                document.getElementById('userAvatar').src = user.avatar;
-                document.getElementById('accountDropdown').style.display = 'flex';
-                document.getElementById('loginButton').style.display = 'none';
+                updateUIForLoggedInUser(user);
             } catch (error) {
-                document.getElementById('accountDropdown').style.display = 'none';
-                document.getElementById('loginButton').style.display = 'block';
+                updateUIForLoggedOutUser();
             }
         }
 
-        // Dropdown toggle
+        function updateUIForLoggedInUser(user) {
+            const avatar = document.getElementById('userAvatar');
+            const name = document.getElementById('userName');
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            avatar.src = user.avatar;
+            name.textContent = user.displayName;
+            dropdown.style.display = 'flex';
+            loginButton.style.display = 'none';
+        }
+
+        function updateUIForLoggedOutUser() {
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            dropdown.style.display = 'none';
+            loginButton.style.display = 'block';
+        }
+
+        // Initialize auth state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUserData();
+            setInterval(fetchUserData, 30000); // Check every 30 seconds
+        });
+
+        // Handle login button click
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        // Handle dropdown toggle
         document.getElementById('accountDropdown').addEventListener('click', (e) => {
             e.stopPropagation();
             document.getElementById('dropdownContent').classList.toggle('show');
@@ -139,11 +171,6 @@
         // Close dropdown when clicking outside
         window.addEventListener('click', () => {
             document.getElementById('dropdownContent').classList.remove('show');
-        });
-
-        // Login handler
-        document.getElementById('loginButton').addEventListener('click', () => {
-            window.location.href = '/auth/google';
         });
 
         // API Test functionality
@@ -155,12 +182,6 @@
             } catch (error) {
                 document.getElementById('api-result').textContent = 'Error: ' + error.message;
             }
-        });
-
-        // Initialize on load
-        document.addEventListener('DOMContentLoaded', () => {
-            lucide.createIcons();
-            fetchUserData();
         });
     </script>
 </body>
