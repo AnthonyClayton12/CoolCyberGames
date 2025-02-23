@@ -174,49 +174,87 @@ body {
     white-space: pre-wrap;
 }
 
-/* Featured Games Section - Rectangular Thumbnails */
-.games-grid {
+/* ===== Featured Games Section (Homepage) ===== */
+.featured-games-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr); /* 3 columns */
     grid-template-rows: repeat(2, 1fr); /* 2 rows */
     gap: 20px;
     padding: 20px;
-    min-height: 400px; /* Set a minimum height for the grid */
+    min-height: 400px;
 }
 
-.game-item {
+.featured-game-item {
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align content to the top-left */
+    align-items: flex-start;
     text-decoration: none;
-    border: 3px solid #00D8FF; /* Blue outline */
+    border: 3px solid #00D8FF;
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    aspect-ratio: 16 / 9; /* Rectangular aspect ratio (16:9) */
-    background-color: #2c2c2c; /* Add a background color for empty space */
+    aspect-ratio: 16 / 9;
+    background-color: #2c2c2c;
 }
 
-.game-item:hover {
+.featured-game-item:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(0, 216, 255, 0.3); /* Blue glow effect */
+    box-shadow: 0 4px 15px rgba(0, 216, 255, 0.3);
 }
 
-.game-image {
-    width: 100%; /* Image takes full width of the container */
-    height: auto; /* Height adjusts based on aspect ratio */
-    object-fit: cover; /* Scale the image to cover the container without distorting */
-    display: block;
-}
-
-.game-title {
-    text-align: left; /* Align title to the left */
-    color: #E0E0E0; /* White text */
+.featured-game-title {
+    text-align: left;
+    color: #E0E0E0;
     margin: 10px;
     font-size: 1.2em;
-    padding: 0 10px; /* Add some padding for better readability */
+    padding: 0 10px;
 }
 
+/* ===== Games Page Styles ===== */
+.games-page-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.game-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 3px solid #00D8FF;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #2c2c2c;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.game-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 216, 255, 0.3);
+}
+
+.game-card-title {
+    color: #00D8FF;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.game-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    aspect-ratio: 16 / 9;
+    border-radius: 8px;
+}
+
+.game-card-description {
+    margin-top: 10px;
+    color: #E0E0E0;
+    font-size: 1rem;
+    line-height: 1.5;
+}
 /* Footer */
 .footer {
     background-color: #1E1E1E;
