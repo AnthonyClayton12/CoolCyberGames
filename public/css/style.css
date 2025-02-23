@@ -174,21 +174,43 @@ body {
     white-space: pre-wrap;
 }
 
-/* Featured Games Section */
-.featured-section {
-    margin: 4rem 0;
-}
-
-.section-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    color: #00D8FF;
-}
-
+/* Featured Games Section - Rectangular Thumbnails */
 .games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Adjust min width as needed */
+    gap: 20px;
+    padding: 20px;
+}
+
+.game-item {
+    display: block;
+    text-decoration: none;
+    border: 3px solid #00D8FF; /* Blue outline to match your theme */
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    aspect-ratio: 16 / 9; /* Rectangular aspect ratio (16:9) */
+}
+
+.game-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(0, 216, 255, 0.3); /* Blue glow effect to match your theme */
+}
+
+.game-image {
+    width: 100%;
+    height: 100%; /* Ensure the image fills the container */
+    object-fit: cover; /* Scale the image to cover the container without distorting */
+    display: block;
+}
+
+/* Optional: Add Game Titles */
+.game-title {
+    text-align: center;
+    color: #E0E0E0; /* Light gray text to match your theme */
+    margin: 10px 0;
+    font-size: 1.2em;
+    padding: 0 10px; /* Add some padding for better readability */
 }
 
 /* Footer */
