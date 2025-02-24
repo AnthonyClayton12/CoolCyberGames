@@ -7,6 +7,35 @@
     <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/assets/CCG_green_blue.jpg" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <span>Cool Cyber Games</span>
+            </a>
+            <div class="navbar-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/games/" class="nav-link">Games</a>
+                <a href="/" class="nav-link">Dashboard</a>
+                <a href="/about/" class="nav-link">About</a>
+                <a href="/contact/" class="nav-link">Contact</a>
+                
+                <!-- Auth Section -->
+                <div class="auth-section">
+                    <div class="account-dropdown" id="accountDropdown" style="display: none;">
+                        <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+                        <span id="userName"></span>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="/user/profile" class="dropdown-item">Profile</a>
+                            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                    <button class="login-button" id="loginButton">Login with Google</button>
+                </div>
+            </div>
+        </div>
+    </nav>
     <h1>Choose a Game to Play</h1>
     <div class="games-page-grid">
         <!-- Malware Maze -->
