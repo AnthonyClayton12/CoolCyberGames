@@ -6,6 +6,55 @@
     <title>Cool Cyber Games</title>
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+    <style>
+        /* Additional CSS for the smaller API Test Section */
+        .api-test-section {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .api-test-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .test-container {
+            text-align: center;
+        }
+
+        #testApiButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        #testApiButton:hover {
+            background-color: #45a049;
+        }
+
+        #api-result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            text-align: left;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -56,15 +105,6 @@
             </button>
         </div>
 
-        <!-- API Test Section -->
-        <section class="api-test-section">
-            <h2 class="section-title">API Status Check</h2>
-            <div class="test-container">
-                <button id="testApiButton" class="start-button">Test API Connection</button>
-                <pre id="api-result" class="api-result"></pre>
-            </div>
-        </section>
-
         <!-- Featured Games Section -->
         <section class="featured-section">
             <h2 class="section-title">Featured Games</h2>
@@ -73,6 +113,15 @@
                     <img src="/assets/thumbnails/malware_maze_thumbnail.png" class="game-image">
                     <p class="featured-game-title">Malware Maze</p>
                 </a>
+            </div>
+        </section>
+
+        <!-- API Test Section -->
+        <section class="api-test-section">
+            <h2 class="section-title">API Status Check</h2>
+            <div class="test-container">
+                <button id="testApiButton" class="start-button">Test API Connection</button>
+                <pre id="api-result" class="api-result"></pre>
             </div>
         </section>
     </main>
