@@ -4,13 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game Selection</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
     <h1>Choose a Game to Play</h1>
-    <ul>
-        <li><a href="/games/malware_maze">Play Malware Maze</a></li>
-        <li><a href="/games/phaser_game_1">Play Phaser Game 1</a></li>
-    </ul>
+    <div class="games-page-grid">
+        <!-- Malware Maze -->
+        <div class="game-card">
+            <h2 class="game-card-title">Malware Maze</h2>
+            <div class="game-card-image-container">
+                <a href="malware_maze/index.html">
+                    <img src="../assets/thumbnails/malware_maze_thumbnail.png" 
+                         alt="Malware Maze Thumbnail" 
+                         class="game-card-image">
+                </a>
+            </div>
+            <div class="game-card-description">
+                <p>Navigate through a maze filled with malware and viruses. Use your cybersecurity skills to avoid threats!</p>
+            </div>
+        </div>
+
+        <!-- Phaser Game 1 -->
+        <div class="game-card">
+            <h2 class="game-card-title">Phaser Game 1</h2>
+            <div class="game-card-image-container">
+                <a href="phaser_game_1/index.html">
+                    <img src="../assets/thumbnails/phaser_game_1_thumbnail.png" 
+                         alt="Phaser Game 1 Thumbnail" 
+                         class="game-card-image">
+                </a>
+            </div>
+            <div class="game-card-description">
+                <p>A fast-paced action game built with Phaser. Defeat enemies and survive!</p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
