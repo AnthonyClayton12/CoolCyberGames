@@ -68,5 +68,66 @@
             </div>
         </div>
     </div>
+     <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script>
+        // Auth functionality
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) throw new Error('Not authenticated');
+                
+                const user = await response.json();
+                updateUIForLoggedInUser(user);
+            } catch (error) {
+                updateUIForLoggedOutUser();
+            }
+        }
+
+        function updateUIForLoggedInUser(user) {
+            const avatar = document.getElementById('userAvatar');
+            const name = document.getElementById('userName');
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            avatar.src = user.avatar;
+            name.textContent = user.displayName;
+            dropdown.style.display = 'flex';
+            loginButton.style.display = 'none';
+        }
+
+        function updateUIForLoggedOutUser() {
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            dropdown.style.display = 'none';
+            loginButton.style.display = 'block';
+        }
+
+        // Initialize auth state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUserData();
+            setInterval(fetchUserData, 30000); // Check every 30 seconds
+        });
+
+        // Handle login button click
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        // Handle dropdown toggle
+        document.getElementById('accountDropdown').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('dropdownContent').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', () => {
+            document.getElementById('dropdownContent').classList.remove('show');
+        });
+    </script>
 </body>
 </html>
