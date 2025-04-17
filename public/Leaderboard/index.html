@@ -1,1 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard | Cool Cyber Games</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {
+      background: #0a192f;
+      color: #E0E0E0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+    }
 
+    .leaderboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .leaderboard-title {
+      font-size: 2.5rem;
+      color: #00FF99;
+      text-shadow: 0 0 8px #00FF99;
+    }
+
+    .leaderboard-subtext {
+      color: #ccc;
+      margin-top: 0.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .top-three {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 2rem;
+      margin-bottom: 3rem;
+    }
+
+    .podium {
+      background: #112240;
+      border: 2px solid #00D8FF44;
+      box-shadow: 0 0 10px #00D8FF33;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+    }
+
+    .podium img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .podium h4 {
+      margin: 0.5rem 0 0.25rem;
+      color: #00D8FF;
+    }
+
+    .volume-label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #0f223a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 216, 255, 0.15);
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #1e3a5e;
+    }
+
+    .leaderboard-table th {
+      background-color: #0d2039;
+      color: #00D8FF;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-table tr:hover {
+      background-color: #102c49;
+    }
+
+    .rank-highlight {
+      color: #00FF99;
+      font-weight: bold;
+    }
+
+    .you {
+      color: #FF6900;
+      font-weight: bold;
+    }
+
+    /* Blur & Overlay */
+    .coming-soon-container {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+      position: relative;
+    }
+
+    .coming-soon-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background-color: rgba(10, 25, 47, 0.95);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      text-align: center;
+      color: #00ffe0;
+      font-size: 2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ffe0;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="../" class="navbar-brand">
+        <img src="../official_CCG.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+        <span>Cool Cyber Games</span>
+      </a>
+      <div class="navbar-links">
+        <a href="../" class="nav-link">Home</a>
+        <a href="../games/" class="nav-link">Games</a>
+        <a href="../dashboard/" class="nav-link">Dashboard</a>
+        <a href="../leaderboard/" class="nav-link active">Leaderboard</a>
+      </div>
+      <div class="auth-section">
+        <button class="login-button">Login with Google</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="coming-soon-overlay">🚧 Coming Soon 🚧</div>
+
+  <div class="coming-soon-container">
+    <div class="leaderboard-container">
+      <p class="leaderboard-subtext">Climb the ranks by solving challenges, completing games, and mastering cybersecurity skills.</p>
+
+      <div class="top-three">
+        <div class="podium">
+          <img src="../avatars/avatar2.png" alt="Top 2">
+          <h4>[2] shadowfox</h4>
+          <div class="volume-label">1,650 XP</div>
+        </div>
+        <div class="podium" style="transform: scale(1.1);">
+          <img src="../avatars/avatar1.png" alt="Top 1">
+          <h4 class="rank-highlight">[1] cyberking</h4>
+          <div class="volume-label">1,820 XP</div>
+        </div>
+        <div class="podium">
+          <img src="../avatars/avatar3.png" alt="Top 3">
+          <h4>[3] malwaremaestro</h4>
+          <div class="volume-label">1,540 XP</div>
+        </div>
+      </div>
+
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>XP</th>
+            <th>Challenges</th>
+            <th>Games Completed</th>
+            <th>Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Unranked</td>
+            <td class="you">You</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0</td>
+            <td>0%</td>
+          </tr>
+          <tr>
+            <td class="rank-highlight">[1]</td>
+            <td>cyberking</td>
+            <td>1820</td>
+            <td>55</td>
+            <td>4</td>
+            <td>98%</td>
+          </tr>
+          <tr>
+            <td>[2]</td>
+            <td>shadowfox</td>
+            <td>1650</td>
+            <td>48</td>
+            <td>3</td>
+            <td>95%</td>
+          </tr>
+          <tr>
+            <td>[3]</td>
+            <td>malwaremaestro</td>
+            <td>1540</td>
+            <td>40</td>
+            <td>1</td>
+            <td>93%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
