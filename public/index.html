@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Cyber Games</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <a href="/" class="navbar-brand">
+                <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <span>Cool Cyber Games</span>
+            </a>
+
+            
+            <div class="navbar-links">
+                <a href="/" class="nav-link active">Home</a>
+                <a href="/games/" class="nav-link">Games</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/leaderboard" class="nav-link">Leaderboard</a>
+                
+                <!-- Auth Section -->
+                <div class="auth-section">
+                    <div class="account-dropdown" id="accountDropdown" style="display: none;">
+                        <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+                        <span id="userName"></span>
+                        <div class="dropdown-content" id="dropdownContent">
+                            <a href="/user/profile" class="dropdown-item">Profile</a>
+                            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+                        </div>
+                    </div>
+                    <button class="login-button" id="loginButton">Login with Google</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+<!-- Main Content -->
+    <main class="main-container">
+        <!-- Welcome Section -->
+        <img src="/assets/ccg_loading_screen.png" alt="Cyber Characters" class="hero-bg">
+        <div class="hero-overlay"></div>
+        <div class="welcome-section">
+            <h1 class="welcome-title"> 
+                <span class="gradient-flow">Cool Cyber Games</span>
+            </h1>
+            <p class="welcome-description">
+                Embark on an epic journey through our cybersecurity challenges. 
+                Learn, compete, and become a master of digital defense through 
+                interactive gameplay and real-world scenarios.
+            </p>
+            <button class="start-button animate-bounce">
+                Start Your Journey
+            </button>
+        </div>
+
+        <!-- Featured Games Section -->
+<!-- Featured Games Section -->
+    <section class="featured-section navy-bg">
+        <h2 class="section-title">Featured Games</h2>
+        <div class="featured-games-grid">
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="assets/thumbnails/malware_maze_cover.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Malware Maze</h3>
+                    <p>Detect and defend against phishing attempts</p>
+                </div>
+            </a>
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="assets/thumbnails/password_master_cover.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Master the Password</h3>
+                    <p>Coming Soon...</p>
+                </div>
+            </a>
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="assets/thumbnails/webquest_cover.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Web Quest</h3>
+                    <p>Coming Soon...</p>
+                </div>
+            </a>
+        </div>
+    </section>
+    <section class="cyber-section">
+    <div class="cyber-divider"></div>
+      <div class="cyber-row reverse">
+        <img src="assets/icons/ccg_play_icon.png" alt="Play Cyber Security" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">PLAY</h2>
+          <p class="cyber-paragraph">
+            Step into simulated cyber scenarios<br>
+            and test your digital defense skills.
+          </p>
+        </div>
+      </div>
+      <div class="cyber-divider"></div>
+    
+      <div class="cyber-row">
+        <img src="assets/icons/ccg_learning_icon.png" alt="Learn Cyber Security" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">LEARN</h2>
+          <p class="cyber-paragraph">
+            Discover essential cybersecurity techniques<br>
+            and master best practices for digital safety.
+          </p>
+        </div>
+      </div>
+      <div class="cyber-divider"></div>
+    
+      <div class="cyber-row reverse">
+        <img src="assets/icons/ccg_compete_icon.png" alt="Compete in Cyber Games" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">COMPETE</h2>
+          <p class="cyber-paragraph">
+            Compete with your peers to rise to the top of the<br>
+            ranks and prove your mastery of digital defense.
+          </p>
+        </div>
+      </div>
+    </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="glow-line"></div>
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/games">Games</a></li>
+                    <li><a href="/dashboard">Dashboard</a></li>
+                    <li><a href="/about">About</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>About</h3>
+                <ul class="footer-links">
+                    <li><a href="/about">About Us</a></li>
+                    <li><a href="/contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul class="footer-links">
+                    <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
+                    <li><a href="user/terms-of-service.html">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Social</h3>
+                <ul class="footer-links">
+                    <li><a href="https://x.com/coolcybergames">Twitter</a></li>
+                    <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
+                    <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+    <script>
+        // Auth functionality
+        async function fetchUserData() {
+            try {
+                const response = await fetch('/api/user', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) throw new Error('Not authenticated');
+                
+                const user = await response.json();
+                updateUIForLoggedInUser(user);
+            } catch (error) {
+                updateUIForLoggedOutUser();
+            }
+        }
+
+        function updateUIForLoggedInUser(user) {
+            const avatar = document.getElementById('userAvatar');
+            const name = document.getElementById('userName');
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            avatar.src = user.avatar;
+            name.textContent = user.displayName;
+            dropdown.style.display = 'flex';
+            loginButton.style.display = 'none';
+        }
+
+        function updateUIForLoggedOutUser() {
+            const dropdown = document.getElementById('accountDropdown');
+            const loginButton = document.getElementById('loginButton');
+            
+            dropdown.style.display = 'none';
+            loginButton.style.display = 'block';
+        }
+
+        // Initialize auth state on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchUserData();
+            setInterval(fetchUserData, 30000); // Check every 30 seconds
+        });
+
+        // Handle login button click
+        document.getElementById('loginButton').addEventListener('click', () => {
+            window.location.href = '/auth/google';
+        });
+
+        // Handle dropdown toggle
+        document.getElementById('accountDropdown').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('dropdownContent').classList.toggle('show');
+        });
+
+        // Close dropdown when clicking outside
+        window.addEventListener('click', () => {
+            document.getElementById('dropdownContent').classList.remove('show');
+        });
+    </script>
+</body>
+</html>

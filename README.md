@@ -1,2 +1,2 @@
 # CoolCyberGames
-Repo for senior project, making a web app for teaching cybersecurity 
+Embark on an epic journey through our cybersecurity challenges. Learn, compete, and become a master of digital defense through interactive gameplay and real-world scenarios.

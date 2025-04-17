@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      background-color: #1E1E1E;
+      color: #E0E0E0;
+    }
+    .login-container {
+      background: #2c2c2c;
+      border: 2px solid #4B0082;
+    }
+    .google-login {
+      background-color: #00D8FF;
+      transition: background-color 0.3s;
+    }
+    .google-login:hover {
+      background-color: #003399;
+    }
+  </style>
+  <script>
+    // Add immediate redirect check
+    document.addEventListener('DOMContentLoaded', () => {
+        fetch('/api/user', { credentials: 'include' })
+            .then(response => {
+                if (response.ok) window.location.href = '/';
+            })
+            .catch(() => console.log('Not logged in'));
+    });
+</script>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login</h1>
+    <a href="/auth/google" class="google-login">Login with Google</a>
+  </div>
+</body>
+</html>

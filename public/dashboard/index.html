@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Cool Cyber Games</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {
+      background: radial-gradient(ellipse at top left, #0a192f, #050c16);
+      color: #E0E0E0;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .panel {
+      background: linear-gradient(145deg, #0d223f, #08192d);
+      border-radius: 12px;
+      padding: 1.5rem;
+      border: 2px solid #00D8FF33;
+      box-shadow: 0 0 20px rgba(0, 216, 255, 0.2), inset 0 0 15px rgba(0, 216, 255, 0.1);
+      width: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .panel:hover {
+      transform: scale(1.01);
+      box-shadow: 0 0 30px rgba(0, 255, 200, 0.3), inset 0 0 20px rgba(0, 200, 255, 0.2);
+    }
+
+    .panel h3 {
+      color: #00D8FF;
+      border-bottom: 2px solid #00D8FF;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      text-shadow: 0 0 5px #00D8FF;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .stat-card {
+      background: #0d2039;
+      padding: 1.5rem;
+      border-radius: 10px;
+      border: 1px solid #00D8FF33;
+      box-shadow: 0 0 10px #00D8FF22;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      background: #102c49;
+      box-shadow: 0 0 20px #00D8FF55;
+    }
+
+    .profile-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+
+    .user-profile {
+      text-align: center;
+      flex: 1 1 200px;
+    }
+
+    .user-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 3px solid #00D8FF;
+      object-fit: cover;
+      margin-bottom: 1rem;
+      box-shadow: 0 0 15px #00D8FF;
+    }
+
+    .profile-info h2 {
+      margin: 0.2rem 0;
+      color: #00D8FF;
+    }
+
+    .edit-profile-btn {
+      background: #00D8FF;
+      color: #121212;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-top: 1rem;
+      transition: 0.3s ease;
+    }
+
+    .edit-profile-btn:hover {
+      background: #00bfff;
+      box-shadow: 0 0 10px #00bfff;
+    }
+
+    .badge-section {
+      flex: 2 1 300px;
+    }
+
+    .badge-section h4 {
+      color: #00FFD0;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 5px #00FFD0;
+    }
+
+    .badge-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .badge {
+      width: 48px;
+      height: 48px;
+      background: radial-gradient(circle, #1b1b1b, #111);
+      border-radius: 50%;
+      border: 2px solid #555;
+      opacity: 0.4;
+      box-shadow: 0 0 10px rgba(0, 216, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .badge:hover {
+      transform: scale(1.1);
+      border-color: #00FFD0;
+      opacity: 0.8;
+      box-shadow: 0 0 15px #00FFD0;
+    }
+
+    .achievements-list, .progress-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .achievements-list li, .progress-list li {
+      padding: 0.75rem 1rem;
+      background: #0d2039;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      border-left: 4px solid #00D8FF;
+      box-shadow: 0 0 5px #00D8FF22;
+      transition: 0.3s ease;
+    }
+
+    .achievements-list li:hover, .progress-list li:hover {
+      background-color: #102c49;
+      box-shadow: 0 0 10px #00D8FF33;
+    }
+
+    progress::-webkit-progress-bar {
+      background-color: #222;
+      border-radius: 10px;
+    }
+
+    progress::-webkit-progress-value {
+      background: linear-gradient(to right, #00FFD0, #00D8FF);
+      border-radius: 10px;
+      box-shadow: 0 0 5px #00D8FF;
+    }
+
+    /* Blur & Overlay */
+    .coming-soon-container {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+      position: relative;
+    }
+
+    .coming-soon-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background-color: rgba(10, 25, 47, 0.95);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      text-align: center;
+      color: #00ffe0;
+      font-size: 2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ffe0;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="../" class="navbar-brand">
+        <img src="../official_CCG.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+        <span>Cool Cyber Games</span>
+      </a>
+
+      <div class="navbar-links">
+        <a href="../" class="nav-link">Home</a>
+        <a href="../games/" class="nav-link">Games</a>
+        <a href="../dashboard/" class="nav-link active">Dashboard</a>
+        <a href="../leaderboard/" class="nav-link">Leaderboard</a>
+      </div>
+
+      <div class="auth-section">
+        <div class="account-dropdown" id="accountDropdown" style="display: none;">
+          <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+          <span id="userName"></span>
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="/user/profile" class="dropdown-item">Profile</a>
+            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+        <button class="login-button" id="loginButton">Login with Google</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="coming-soon-overlay">🚧 Coming Soon 🚧</div>
+
+  <div class="coming-soon-container">
+    <div class="dashboard-container">
+      <div class="panel">
+        <h3>Profile</h3>
+        <div class="profile-grid">
+          <div class="user-profile">
+            <img src="https://via.placeholder.com/100" alt="Avatar" class="user-avatar" />
+            <div class="profile-info">
+              <h2>Username</h2>
+              <p>Email: user@example.com</p>
+            </div>
+            <button class="edit-profile-btn">Edit Profile</button>
+          </div>
+          <div class="badge-section">
+            <h4>Badges</h4>
+            <div class="badge-grid">
+              <div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div>
+              <div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Account Overview</h3>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h4>Total XP</h4>
+            <p>13,450</p>
+          </div>
+          <div class="stat-card">
+            <h4>Completed Challenges</h4>
+            <p>42</p>
+          </div>
+          <div class="stat-card">
+            <h4>Rank</h4>
+            <p>Cyber Defender</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>Achievements</h3>
+        <ul class="achievements-list">
+          <li>First Login - Welcome to Cool Cyber Games!</li>
+          <li>Malware Maze Master - Finished all levels</li>
+          <li>Password Champion - Scored 100% on quiz</li>
+        </ul>
+      </div>
+
+      <div class="panel">
+        <h3>Learning Progress</h3>
+        <ul class="progress-list">
+          <li>Malware Maze: <progress value="100" max="100"></progress> Completed</li>
+          <li>Master the Password: <progress value="60" max="100"></progress> In Progress</li>
+          <li>Web Quest: <progress value="0" max="100"></progress> Not Started</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
