@@ -6,7 +6,7 @@
     <title>Games | Cool Cyber Games</title>
     <link rel="stylesheet" href="../css/style.css">
     <style>
-     body {
+    body {
       background: radial-gradient(ellipse at top left, #0a192f, #050c16);
       color: #E0E0E0;
       font-family: 'Segoe UI', sans-serif;
@@ -55,6 +55,7 @@
       box-shadow: 0 0 20px rgba(0, 216, 255, 0.15);
       position: relative;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
     }
 
     .game-card:hover {
@@ -90,6 +91,85 @@
       font-size: 0.95rem;
       color: #B0BEC5;
       margin: 0;
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 99;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: #0a192f;
+      border-radius: 12px;
+      padding: 2rem;
+      max-width: 800px;
+      width: 90%;
+      position: relative;
+      color: #E0E0E0;
+    }
+
+    .modal-content video {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .preview-details p {
+      margin: 0.5rem 0;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      font-size: 2rem;
+      color: #00FFD0;
+      cursor: pointer;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .modal-btn {
+      padding: 0.7rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s ease;
+      text-decoration: none;
+      font-size: 1rem;
+    }
+
+    .play-btn {
+      background: #00FFD0;
+      color: #000;
+    }
+
+    .play-btn:hover {
+      background: #00bfff;
+    }
+
+    .back-btn {
+      background: transparent;
+      color: #00FFD0;
+      border: 1px solid #00FFD0;
+    }
+
+    .back-btn:hover {
+      background: #00FFD0;
+      color: #000;
     }
   </style>
 </head>
@@ -166,10 +246,65 @@
       </div>
     </div>
   </div>
-</body>
+
+<!-- Game Preview Modal -->
+  <div id="gamePreviewModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closePreview()">&times;</span>
+      <video id="previewVideo" controls autoplay muted></video>
+      <div class="preview-details">
+        <h2 id="gameTitle">Game Title</h2>
+        <p><strong>Difficulty:</strong> <span id="gameDifficulty"></span></p>
+        <p><strong>Estimated Time:</strong> <span id="gameTime"></span></p>
+        <p><strong>Skills:</strong> <span id="gameSkills"></span></p>
+        <p><strong>Description:</strong> <span id="gameDescription"></span></p>
+        <p><strong>Badges:</strong> <span id="gameBadges"></span></p>
+      </div>
+      <div class="modal-actions">
+        <a id="playNowBtn" href="#" class="modal-btn play-btn" target="_blank">▶ Play Now</a>
+        <button class="modal-btn back-btn" onclick="closePreview()">Back</button>
+      </div>
+    </div>
+ </div>
      <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
     <script>
+        // pop_up for each game functioanlity
+        const gameData = {
+          malwareMaze: {
+            title: "Malware Maze",
+            video: "../malware-maze-preview.mp4",
+            difficulty: "Medium",
+            time: "10–15 minutes",
+            skills: "Phishing detection, Malware avoidance",
+            description: "Navigate a digital maze and avoid threats while learning about malware.",
+            badges: "Maze Runner, Malware Master",
+            playLink: "../malware-maze/index.html"
+          }
+        };
+    
+        function openPreview(gameId) {
+          const game = gameData[gameId];
+          document.getElementById("gameTitle").textContent = game.title;
+          document.getElementById("previewVideo").src = game.video;
+          document.getElementById("gameDifficulty").textContent = game.difficulty;
+          document.getElementById("gameTime").textContent = game.time;
+          document.getElementById("gameSkills").textContent = game.skills;
+          document.getElementById("gameDescription").textContent = game.description;
+          document.getElementById("gameBadges").textContent = game.badges;
+          document.getElementById("playNowBtn").href = game.playLink;
+    
+          document.getElementById("gamePreviewModal").style.display = "flex";
+        }
+    
+        function closePreview() {
+          const modal = document.getElementById("gamePreviewModal");
+          const video = document.getElementById("previewVideo");
+          modal.style.display = "none";
+          video.pause();
+          video.currentTime = 0;
+          video.src = "";
+        }
         // Auth functionality
         async function fetchUserData() {
             try {
