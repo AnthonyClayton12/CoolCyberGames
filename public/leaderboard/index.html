@@ -143,7 +143,15 @@
         <a href="../leaderboard/" class="nav-link active">Leaderboard</a>
       </div>
       <div class="auth-section">
-        <button class="login-button">Login with Google</button>
+        <div class="account-dropdown" id="accountDropdown" style="display: none;">
+          <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+          <span id="userName"></span>
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="/user/profile" class="dropdown-item">Profile</a>
+            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+        <button class="login-button" id="loginButton">Login with Google</button>
       </div>
     </div>
   </nav>
