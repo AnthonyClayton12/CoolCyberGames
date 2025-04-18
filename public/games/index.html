@@ -176,6 +176,34 @@
 
 <body>
 
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="../" class="navbar-brand">
+        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+        <span>Cool Cyber Games</span>
+      </a>
+
+      <div class="navbar-links">
+        <a href="../" class="nav-link">Home</a>
+        <a href="../games/" class="nav-link">Games</a>
+        <a href="../dashboard/" class="nav-link active">Dashboard</a>
+        <a href="../leaderboard/" class="nav-link">Leaderboard</a>
+      </div>
+
+      <div class="auth-section">
+        <div class="account-dropdown" id="accountDropdown" style="display: none;">
+          <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+          <span id="userName"></span>
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="/user/profile" class="dropdown-item">Profile</a>
+            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+        <button class="login-button" id="loginButton">Login with Google</button>
+      </div>
+    </div>
+  </nav>
+
   <!-- ================= CATALOG SECTION ================= -->
   <div class="catalog-container">
     <div class="filter-bar">
