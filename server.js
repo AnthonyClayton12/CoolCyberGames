@@ -136,6 +136,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, filePath) => {
+    // 🔹 Brotli support
     if (filePath.endsWith('.wasm.br')) {
       res.setHeader('Content-Encoding', 'br');
       res.setHeader('Content-Type', 'application/wasm');
@@ -144,6 +145,18 @@ app.use(express.static(path.join(__dirname, 'public'), {
       res.setHeader('Content-Type', 'application/javascript');
     } else if (filePath.endsWith('.data.br')) {
       res.setHeader('Content-Encoding', 'br');
+      res.setHeader('Content-Type', 'application/octet-stream');
+    }
+
+    // 🔹 Gzip fallback support
+    else if (filePath.endsWith('.wasm.gz')) {
+      res.setHeader('Content-Encoding', 'gzip');
+      res.setHeader('Content-Type', 'application/wasm');
+    } else if (filePath.endsWith('.js.gz')) {
+      res.setHeader('Content-Encoding', 'gzip');
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filePath.endsWith('.data.gz')) {
+      res.setHeader('Content-Encoding', 'gzip');
       res.setHeader('Content-Type', 'application/octet-stream');
     }
   }
