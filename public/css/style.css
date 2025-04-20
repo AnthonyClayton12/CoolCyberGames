@@ -44,6 +44,7 @@ body {
     color: #E0E0E0;
     text-decoration: none;
     transition: color 0.3s ease;
+    font-weight: bold;
 }
 
 .nav-link:hover {
@@ -51,7 +52,7 @@ body {
 }
 
 .nav-link.active {
-    color: #00D8FF;
+    color: #FF6900;
 }
 
 /* ----- Auth & Account Dropdown ----- */
