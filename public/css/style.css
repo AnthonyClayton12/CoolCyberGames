@@ -202,6 +202,29 @@ body {
   100% { background-position: 200% center; }
 }
 
+#feedback-bubble {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #00e0ff;
+      color: #0a0a0a;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 30px;
+      box-shadow: 0 0 15px rgba(0, 224, 255, 0.6);
+      cursor: pointer;
+      z-index: 999;
+      animation: bounce 1.5s infinite;
+      transition: transform 0.2s ease;
+  }
+  #feedback-bubble:hover {
+      transform: scale(1.1);
+  }
+  @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+  }
+
 /* Example of a "wonky," orange button matching the logo's outline color */
 .start-button {
   /* Use a flat orange color (no gradient) */
