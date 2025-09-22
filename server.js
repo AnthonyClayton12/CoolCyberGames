@@ -334,6 +334,219 @@ Promise.all([
 });
 
 /**********************************************************************************
+ *                              HELPERS
+ **********************************************************************************/
+function requireAuth(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  return res.status(401).json({ error: 'Not authenticated' });
+}
+
+/**********************************************************************************
+ *                              POST /api/score
+ *  - Upserts per-game highScore
+ *  - Updates totals.totalPoints
+ *  - Unlocks 2 achievements (score thresholds) + completion badge
+ **********************************************************************************/
+app.post('/api/score', requireAuth, async (req, res) => {
+  try {
+    const { gameKey, score, completed } = req.body;
+
+    if (!gameKey || typeof score !== 'number' || Number.isNaN(score)) {
+      return res.status(400).json({ error: 'gameKey and numeric score are required' });
+    }
+
+    const userId = req.user._id;
+
+    // 1) Current high
+    const existing = await Score.findOne({ userId, gameKey }).lean();
+    const oldHigh = existing?.highScore ?? 0;
+
+    // 2) Upsert if better
+    let newHigh = oldHigh;
+    if (score > oldHigh) {
+      const updated = await Score.findOneAndUpdate(
+        { userId, gameKey },
+        { $set: { highScore: score } },
+        { upsert: true, new: true }
+      ).lean();
+      newHigh = updated.highScore;
+    }
+
+    // 3) Update totals if high improved
+    let totalDoc = await Total.findOne({ userId }).lean();
+    if (!totalDoc) {
+      // first time → compute sum
+      const agg = await Score.aggregate([
+        { $match: { userId } },
+        { $group: { _id: '$userId', sum: { $sum: '$highScore' } } }
+      ]);
+      const sum = agg[0]?.sum ?? newHigh;
+      totalDoc = await Total.findOneAndUpdate(
+        { userId },
+        { $set: { totalPoints: sum } },
+        { upsert: true, new: true }
+      ).lean();
+    } else if (newHigh > oldHigh) {
+      const delta = newHigh - oldHigh;
+      totalDoc = await Total.findOneAndUpdate(
+        { userId },
+        { $inc: { totalPoints: delta } },
+        { new: true }
+      ).lean();
+    }
+
+    // 4) Unlocks
+    const now = new Date();
+    const unlockedAchievements = [];
+    const unlockedBadges = [];
+
+    // ensure doc
+    const userUnlocks = await UserUnlocks.findOneAndUpdate(
+      { userId },
+      { $setOnInsert: { achievements: [], badges: [] } },
+      { upsert: true, new: true }
+    );
+
+    // Achievements (score thresholds)
+    const achCatalog = await AchievementCatalog.find({ gameKey }).lean();
+    const haveAch = new Set((userUnlocks.achievements || []).map(a => a.key));
+    for (const ach of achCatalog) {
+      if (ach.threshold?.type === 'score' && newHigh >= ach.threshold.value && !haveAch.has(ach.key)) {
+        await UserUnlocks.updateOne(
+          { userId, 'achievements.key': { $ne: ach.key } },
+          { $push: { achievements: { key: ach.key, unlockedAt: now } } }
+        );
+        unlockedAchievements.push({ key: ach.key, name: ach.name });
+      }
+    }
+
+    // Completion badge (rule: score>0 or explicit completed flag)
+    const badge = await BadgeCatalog.findOne({ gameKey }).lean();
+    if (badge) {
+      const haveBadge = new Set((userUnlocks.badges || []).map(b => b.key));
+      const rule = badge.completionRule || 'score>0';
+      const met = rule === 'score>0' ? (newHigh > 0 || score > 0) : !!completed;
+      if (met && !haveBadge.has(badge.key)) {
+        await UserUnlocks.updateOne(
+          { userId, 'badges.key': { $ne: badge.key } },
+          { $push: { badges: { key: badge.key, unlockedAt: now } } }
+        );
+        unlockedBadges.push({ key: badge.key, name: badge.name });
+      }
+    }
+
+    return res.json({
+      gameKey,
+      submitted: score,
+      highScore: newHigh,
+      totalPoints: totalDoc?.totalPoints ?? 0,
+      unlockedAchievements,
+      unlockedBadges
+    });
+  } catch (e) {
+    console.error('/api/score error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**********************************************************************************
+ *                              GET /api/dashboard
+ *  - For logged-in users: { user, totalPoints, perGame[] }
+ *  - For guests: { guest: true, loginUrl }
+ **********************************************************************************/
+app.get('/api/dashboard', async (req, res) => {
+  try {
+    if (!req.isAuthenticated || !req.isAuthenticated()) {
+      return res.json({ guest: true, loginUrl: '/auth/google' });
+    }
+    const userId = req.user._id;
+
+    const [totalDoc, scores, unlocks] = await Promise.all([
+      Total.findOne({ userId }).lean(),
+      Score.find({ userId }).lean(),
+      UserUnlocks.findOne({ userId }).lean()
+    ]);
+
+    const achSet = new Set((unlocks?.achievements || []).map(a => a.key));
+    const badgeSet = new Set((unlocks?.badges || []).map(b => b.key));
+
+    // Build per-game view
+    const perGame = scores.map(s => {
+      const gamePrefix = `${s.gameKey}__`;
+      const achievementsUnlocked = [...achSet].filter(k => k.startsWith(gamePrefix));
+      const completionBadgeUnlocked = badgeSet.has(`${s.gameKey}__completion`);
+      return {
+        gameKey: s.gameKey,
+        highScore: s.highScore,
+        achievementsUnlocked,
+        completionBadgeUnlocked
+      };
+    });
+
+    res.json({
+      user: {
+        id: req.user.id,
+        displayName: req.user.displayName,
+        email: req.user.email,
+        avatar: req.user.avatar
+      },
+      totalPoints: totalDoc?.totalPoints ?? 0,
+      perGame
+    });
+  } catch (e) {
+    console.error('/api/dashboard error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**********************************************************************************
+ *                              GET /api/leaderboard
+ *  - Public: returns users sorted by totalPoints desc
+ *  - Query: ?limit=50&offset=0
+ **********************************************************************************/
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit || '50', 10), 200);
+    const offset = Math.max(parseInt(req.query.offset || '0', 10), 0);
+
+    // 1) Get totals slice
+    const totals = await Total.find({})
+      .sort({ totalPoints: -1, _id: 1 })
+      .skip(offset)
+      .limit(limit)
+      .lean();
+
+    const userIds = totals.map(t => t.userId);
+    // 2) Fetch user display info from userDB in one go
+    const users = await User.find({ _id: { $in: userIds } })
+      .select('_id displayName avatar')
+      .lean();
+    const uMap = new Map(users.map(u => [String(u._id), u]));
+
+    // 3) Build rows with rank numbers
+    const startRank = offset + 1;
+    const items = totals.map((t, i) => {
+      const u = uMap.get(String(t.userId)) || {};
+      return {
+        rank: startRank + i,
+        userId: String(t.userId),
+        displayName: u.displayName || 'Player',
+        avatar: u.avatar || 'https://via.placeholder.com/40',
+        totalPoints: t.totalPoints
+      };
+    });
+
+    res.json({
+      items,
+      nextOffset: offset + items.length
+    });
+  } catch (e) {
+    console.error('/api/leaderboard error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+/**********************************************************************************
  *                              DEV SEED 
  **********************************************************************************/
 
@@ -378,5 +591,5 @@ if (process.env.ENABLE_SEED === 'true') {
   });
 
   // (Other)
-  
+
 }
