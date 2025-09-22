@@ -55,6 +55,63 @@ const userSchema = new mongoose.Schema({
 const User = userDB.model('User', userSchema);
 
 /**********************************************************************************
+ *                              GAME MODELS (gameDB)
+ **********************************************************************************/
+const { Schema } = mongoose;
+
+// 1) Per-user per-game high score
+const scoreSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, required: true, index: true },
+  gameKey: { type: String, required: true },
+  highScore: { type: Number, default: 0 },
+}, { timestamps: true });
+
+scoreSchema.index({ userId: 1, gameKey: 1 }, { unique: true });
+
+// 2) Per-user total points (sum of highs across all games)
+const totalsSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, required: true, unique: true },
+  totalPoints: { type: Number, default: 0 },
+}, { timestamps: true });
+
+// 3) Achievements catalog (two per game; thresholded by high score)
+const achievementCatalogSchema = new Schema({
+  key: { type: String, required: true, unique: true },
+  gameKey: { type: String, required: true, index: true },
+  name: { type: String, required: true },
+  description: String,
+  threshold: {
+    type: { type: String, enum: ['score'], default: 'score' },
+    value: { type: Number, required: true }
+  },
+  sort: { type: Number, default: 0 }
+}, { timestamps: true });
+
+// 4) One completion badge per game
+const badgeCatalogSchema = new Schema({
+  key: { type: String, required: true, unique: true },
+  gameKey: { type: String, required: true, index: true },
+  name: { type: String, required: true },
+  iconUrl: String,
+  // simple rule for now: 'score>0' means first valid score unlocks it
+  completionRule: { type: String, default: 'score>0' },
+  sort: { type: Number, default: 0 }
+}, { timestamps: true });
+
+// 5) What each user has unlocked (achievements + badges)
+const userUnlocksSchema = new Schema({
+  userId: { type: Schema.Types.ObjectId, required: true, unique: true },
+  achievements: [{ key: String, unlockedAt: Date }],
+  badges: [{ key: String, unlockedAt: Date }],
+}, { timestamps: true });
+
+const Score                = gameDB.model('Score', scoreSchema);
+const Total                = gameDB.model('Total', totalsSchema);
+const AchievementCatalog   = gameDB.model('AchievementCatalog', achievementCatalogSchema);
+const BadgeCatalog         = gameDB.model('BadgeCatalog', badgeCatalogSchema);
+const UserUnlocks          = gameDB.model('UserUnlocks', userUnlocksSchema);
+
+/**********************************************************************************
  *                              SESSION CONFIGURATION
  **********************************************************************************/
 // Session Configuration
@@ -241,6 +298,7 @@ const serveStatic = (path) => (req, res) => res.sendFile(`${__dirname}/public/${
 app.get('/', serveStatic('index.html'));
 app.get('/about', serveStatic('about/index.html'));
 app.get('/contact', serveStatic('contact/index.html'));
+app.get('/dashboard', (req, res) => res.sendFile(`${__dirname}/public/dashboard/index.html`));
 app.get('/games/malware_maze', serveStatic('games/malware_maze/index.html'));
 app.get('/games/phaser_game_1', serveStatic('games/phaser_game_1/index.html'));
 app.get('/user/login', serveStatic('user/login.html'));
@@ -274,3 +332,51 @@ Promise.all([
   console.error("Failed to start server:", err);
   process.exit(1);
 });
+
+/**********************************************************************************
+ *                              DEV SEED 
+ **********************************************************************************/
+
+// (Malware Maze)
+if (process.env.ENABLE_SEED === 'true') {
+  app.post('/admin/seed/malware_maze', async (req, res) => {
+    try {
+      const ach1 = {
+        key: 'malware_maze__a1',
+        gameKey: 'malware_maze',
+        name: 'Malware Master',
+        description: 'Score 1,000+ in Malware Maze.',
+        threshold: { type: 'score', value: 5000 },
+        sort: 1
+      };
+      const ach2 = {
+        key: 'malware_maze__a2',
+        gameKey: 'malware_maze',
+        name: 'Threat Neutralizer',
+        description: 'Score 3,000+ in Malware Maze.',
+        threshold: { type: 'score', value: 10000 },
+        sort: 2
+      };
+      const badge = {
+        key: 'malware_maze__completion',
+        gameKey: 'malware_maze',
+        name: 'Completed Malware Maze',
+        iconUrl: '/assets/badges/malware_maze.svg',
+        completionRule: 'score>0',
+        sort: 1
+      };
+
+      await AchievementCatalog.updateOne({ key: ach1.key }, { $set: ach1 }, { upsert: true });
+      await AchievementCatalog.updateOne({ key: ach2.key }, { $set: ach2 }, { upsert: true });
+      await BadgeCatalog.updateOne({ key: badge.key }, { $set: badge }, { upsert: true });
+
+      res.json({ ok: true, insertedOrUpdated: ['achievements x2', 'badge x1'] });
+    } catch (e) {
+      console.error('Seed error:', e);
+      res.status(500).json({ ok: false, error: e.message });
+    }
+  });
+
+  // (Other)
+  
+}
