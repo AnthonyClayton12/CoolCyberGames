@@ -200,6 +200,20 @@
       text-shadow: 0 0 5px #00ffe0;
       box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
     }
+
+    /* ✅ Dropdown visibility toggle */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: #0d223f;
+      border: 1px solid #00D8FF33;
+      border-radius: 8px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    .dropdown-content.show {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -295,104 +309,104 @@
   </div>
 
   <footer class="footer">
-        <div class="footer-content">
-            <div class="glow-line"></div>
-            <div class="footer-section">
-                <h3>Navigation</h3>
-                <ul class="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/games">Games</a></li>
-                    <li><a href="/dashboard">Dashboard</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>About</h3>
-                <ul class="footer-links">
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Legal</h3>
-                <ul class="footer-links">
-                    <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
-                    <li><a href="user/terms-of-service.html">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Social</h3>
-                <ul class="footer-links">
-                    <li><a href="https://x.com/coolcybergames">Twitter</a></li>
-                    <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
-                    <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
+    <div class="footer-content">
+      <div class="glow-line"></div>
+      <div class="footer-section">
+        <h3>Navigation</h3>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games">Games</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>About</h3>
+        <ul class="footer-links">
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="user/terms-of-service.html">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Social</h3>
+        <ul class="footer-links">
+          <li><a href="https://x.com/coolcybergames">Twitter</a></li>
+          <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
+          <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
 
-<!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
-    <script>
-        // Auth functionality
-        async function fetchUserData() {
-            try {
-                const response = await fetch('/api/user', {
-                    credentials: 'include'
-                });
-                
-                if (!response.ok) throw new Error('Not authenticated');
-                
-                const user = await response.json();
-                updateUIForLoggedInUser(user);
-            } catch (error) {
-                updateUIForLoggedOutUser();
-            }
-        }
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+  <script>
+    // Auth functionality
+    async function fetchUserData() {
+      try {
+        const response = await fetch('/api/user', { credentials: 'include' });
+        if (!response.ok) throw new Error('Not authenticated');
+        const user = await response.json();
+        updateUIForLoggedInUser(user);
+      } catch (error) {
+        updateUIForLoggedOutUser();
+      }
+    }
 
-        function updateUIForLoggedInUser(user) {
-            const avatar = document.getElementById('userAvatar');
-            const name = document.getElementById('userName');
-            const dropdown = document.getElementById('accountDropdown');
-            const loginButton = document.getElementById('loginButton');
-            
-            avatar.src = user.avatar;
-            name.textContent = user.displayName;
-            dropdown.style.display = 'flex';
-            loginButton.style.display = 'none';
-        }
+    function updateUIForLoggedInUser(user) {
+      const avatar = document.getElementById('userAvatar');
+      const name = document.getElementById('userName');
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
 
-        function updateUIForLoggedOutUser() {
-            const dropdown = document.getElementById('accountDropdown');
-            const loginButton = document.getElementById('loginButton');
-            
-            dropdown.style.display = 'none';
-            loginButton.style.display = 'block';
-        }
+      avatar.src = user.avatar || 'https://via.placeholder.com/40';
+      name.textContent = user.displayName || 'Player';
+      dropdown.style.display = 'flex';
+      loginButton.style.display = 'none';
+    }
 
-        // Initialize auth state on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUserData();
-            setInterval(fetchUserData, 30000); // Check every 30 seconds
+    function updateUIForLoggedOutUser() {
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
+      dropdown.style.display = 'none';
+      loginButton.style.display = 'block';
+    }
+
+    // Initialize after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchUserData();
+      setInterval(fetchUserData, 30000); // Check every 30 seconds
+
+      // Attach events safely after DOM is parsed
+      const loginBtn = document.getElementById('loginButton');
+      const acctDropdown = document.getElementById('accountDropdown');
+      const dropdownContent = document.getElementById('dropdownContent');
+
+      if (loginBtn) {
+        loginBtn.addEventListener('click', () => {
+          window.location.href = '/auth/google';
         });
+      }
 
-        // Handle login button click
-        document.getElementById('loginButton').addEventListener('click', () => {
-            window.location.href = '/auth/google';
+      if (acctDropdown) {
+        acctDropdown.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdownContent.classList.toggle('show');
         });
+      }
 
-        // Handle dropdown toggle
-        document.getElementById('accountDropdown').addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.getElementById('dropdownContent').classList.toggle('show');
-        });
-
-        // Close dropdown when clicking outside
-        window.addEventListener('click', () => {
-            document.getElementById('dropdownContent').classList.remove('show');
-        });
-    </script>
-  
+      window.addEventListener('click', () => {
+        dropdownContent.classList.remove('show');
+      });
+    });
+  </script>
 </body>
 </html>
