@@ -229,9 +229,11 @@ app.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: 'user/login', successRedirect: '/' }),
     (req, res) => {
       console.log("Successful Google authentication!");
+      // Send them to dashboard so they see their data immediately
+      res.redirect('/dashboard');
 });
 
-app.get('/auth/logout', (req, res) => {
+app.get('/auth/logout', (req, res, next) => {
   req.logout(err => {
     if (err) { return next(err); }
     req.session.destroy(err => {
@@ -591,5 +593,38 @@ if (process.env.ENABLE_SEED === 'true') {
   });
 
   // (Other)
+
+  /**********************************************************************************
+ *                              CATALOG ROUTES
+ **********************************************************************************/
+
+// All games' achievement + badge catalogs (public)
+app.get('/api/catalog', async (req, res) => {
+  try {
+    const [ach, badges] = await Promise.all([
+      AchievementCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean(),
+      BadgeCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean()
+    ]);
+    res.json({ achievements: ach, badges });
+  } catch (e) {
+    console.error('/api/catalog error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Single game’s catalog (public)
+app.get('/api/catalog/:gameKey', async (req, res) => {
+  try {
+    const gameKey = req.params.gameKey;
+    const [ach, badge] = await Promise.all([
+      AchievementCatalog.find({ gameKey }).sort({ sort: 1 }).lean(),
+      BadgeCatalog.findOne({ gameKey }).lean()
+    ]);
+    res.json({ gameKey, achievements: ach, badge });
+  } catch (e) {
+    console.error('/api/catalog/:gameKey error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
 
 }
