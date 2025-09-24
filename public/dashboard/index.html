@@ -31,11 +31,7 @@
       width: 100%;
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
-    .panel:hover {
-      transform: scale(1.01);
-      box-shadow: 0 0 30px rgba(0, 255, 200, 0.3), inset 0 0 20px rgba(0, 200, 255, 0.2);
-    }
+    .panel:hover { transform: scale(1.01); box-shadow: 0 0 30px rgba(0,255,200,.3), inset 0 0 20px rgba(0,200,255,.2); }
 
     .panel h3 {
       color: #00D8FF;
@@ -45,181 +41,48 @@
       text-shadow: 0 0 5px #00D8FF;
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 1.5rem;
-    }
-
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
     .stat-card {
-      background: #0d2039;
-      padding: 1.5rem;
-      border-radius: 10px;
-      border: 1px solid #00D8FF33;
-      box-shadow: 0 0 10px #00D8FF22;
-      text-align: center;
-      transition: all 0.3s ease;
+      background: #0d2039; padding: 1.5rem; border-radius: 10px;
+      border: 1px solid #00D8FF33; box-shadow: 0 0 10px #00D8FF22; text-align: center; transition: .3s;
     }
+    .stat-card:hover { background:#102c49; box-shadow:0 0 20px #00D8FF55; }
 
-    .stat-card:hover {
-      background: #102c49;
-      box-shadow: 0 0 20px #00D8FF55;
-    }
+    .profile-grid { display:flex; flex-wrap:wrap; gap:2rem; align-items:flex-start; }
+    .user-profile { text-align:center; flex:1 1 200px; }
+    .user-avatar { width:100px; height:100px; border-radius:50%; border:3px solid #00D8FF; object-fit:cover; margin-bottom:1rem; box-shadow:0 0 15px #00D8FF; }
+    .profile-info h2 { margin:.2rem 0; color:#00D8FF; }
+    .edit-profile-btn { background:#00D8FF; color:#121212; border:none; padding:.6rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:1rem; transition:.3s; }
+    .edit-profile-btn:hover { background:#00bfff; box-shadow:0 0 10px #00bfff; }
 
-    .profile-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2rem;
-      align-items: flex-start;
-    }
+    .badge-section { flex:2 1 300px; }
+    .badge-section h4 { color:#00FFD0; margin-bottom:.5rem; text-shadow:0 0 5px #00FFD0; }
+    .badge-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; justify-items:center; }
+    .badge { width:48px; height:48px; background: radial-gradient(circle,#1b1b1b,#111); border-radius:50%; border:2px solid #555; opacity:.4; box-shadow:0 0 10px rgba(0,216,255,.1); transition:.3s; }
+    .badge:hover { transform:scale(1.1); border-color:#00FFD0; opacity:.8; box-shadow:0 0 15px #00FFD0; }
+    /* active (unlocked) badge state */
+    .badge.active { opacity:1; border-color:#00FFD0; box-shadow:0 0 15px #00FFD0; background: radial-gradient(circle,#0e2a3e,#0b1f30); }
 
-    .user-profile {
-      text-align: center;
-      flex: 1 1 200px;
-    }
-
-    .user-avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      border: 3px solid #00D8FF;
-      object-fit: cover;
-      margin-bottom: 1rem;
-      box-shadow: 0 0 15px #00D8FF;
-    }
-
-    .profile-info h2 {
-      margin: 0.2rem 0;
-      color: #00D8FF;
-    }
-
-    .edit-profile-btn {
-      background: #00D8FF;
-      color: #121212;
-      border: none;
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-      margin-top: 1rem;
-      transition: 0.3s ease;
-    }
-
-    .edit-profile-btn:hover {
-      background: #00bfff;
-      box-shadow: 0 0 10px #00bfff;
-    }
-
-    .badge-section {
-      flex: 2 1 300px;
-    }
-
-    .badge-section h4 {
-      color: #00FFD0;
-      margin-bottom: 0.5rem;
-      text-shadow: 0 0 5px #00FFD0;
-    }
-
-    .badge-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 20px;
-      justify-items: center;
-    }
-
-    .badge {
-      width: 48px;
-      height: 48px;
-      background: radial-gradient(circle, #1b1b1b, #111);
-      border-radius: 50%;
-      border: 2px solid #555;
-      opacity: 0.4;
-      box-shadow: 0 0 10px rgba(0, 216, 255, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .badge:hover {
-      transform: scale(1.1);
-      border-color: #00FFD0;
-      opacity: 0.8;
-      box-shadow: 0 0 15px #00FFD0;
-    }
-
-    .achievements-list, .progress-list {
-      list-style: none;
-      padding: 0;
-    }
-
+    .achievements-list, .progress-list { list-style:none; padding:0; }
     .achievements-list li, .progress-list li {
-      padding: 0.75rem 1rem;
-      background: #0d2039;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-      border-left: 4px solid #00D8FF;
-      box-shadow: 0 0 5px #00D8FF22;
-      transition: 0.3s ease;
+      padding:.75rem 1rem; background:#0d2039; border-radius:8px; margin-bottom:.5rem;
+      border-left:4px solid #00D8FF; box-shadow:0 0 5px #00D8FF22; transition:.3s;
     }
+    .achievements-list li:hover, .progress-list li:hover { background:#102c49; box-shadow:0 0 10px #00D8FF33; }
 
-    .achievements-list li:hover, .progress-list li:hover {
-      background-color: #102c49;
-      box-shadow: 0 0 10px #00D8FF33;
-    }
+    progress::-webkit-progress-bar { background:#222; border-radius:10px; }
+    progress::-webkit-progress-value { background:linear-gradient(to right,#00FFD0,#00D8FF); border-radius:10px; box-shadow:0 0 5px #00D8FF; }
 
-    progress::-webkit-progress-bar {
-      background-color: #222;
-      border-radius: 10px;
-    }
-
-    progress::-webkit-progress-value {
-      background: linear-gradient(to right, #00FFD0, #00D8FF);
-      border-radius: 10px;
-      box-shadow: 0 0 5px #00D8FF;
-    }
-
-    /* Blur & Overlay */
-    .coming-soon-container {
-      filter: blur(5px);
-      pointer-events: none;
-      user-select: none;
-      position: relative;
-    }
-    .coming-soon-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      z-index: 10;
-      background-color: rgba(10, 25, 47, 0.95);
-      padding: 2rem 3rem;
-      border-radius: 20px;
-      text-align: center;
-      color: #00ffe0;
-      font-size: 2rem;
-      font-weight: bold;
-      text-shadow: 0 0 5px #00ffe0;
-      box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
-    }
-
-    /* ✅ Dropdown visibility toggle */
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      background: #0d223f;
-      border: 1px solid #00D8FF33;
-      border-radius: 8px;
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-    }
-    .dropdown-content.show {
-      display: block;
-    }
+    /* Dropdown visibility toggle */
+    .dropdown-content { display:none; position:absolute; background:#0d223f; border:1px solid #00D8FF33; border-radius:8px; padding:.5rem; margin-top:.5rem; }
+    .dropdown-content.show { display:block; }
   </style>
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-container">
       <a href="../" class="navbar-brand">
-        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height:32px;width:32px;">
         <span>Cool Cyber Games</span>
       </a>
 
@@ -231,7 +94,7 @@
       </div>
 
       <div class="auth-section">
-        <div class="account-dropdown" id="accountDropdown" style="display: none;">
+        <div class="account-dropdown" id="accountDropdown" style="display:none;">
           <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
           <span id="userName"></span>
           <div class="dropdown-content" id="dropdownContent">
@@ -243,64 +106,49 @@
       </div>
     </div>
   </nav>
-  
-    <div class="dashboard-container">
-      <div class="panel">
-        <h3>Profile</h3>
-        <div class="profile-grid">
-          <div class="user-profile">
-            <img src="https://via.placeholder.com/100" alt="Avatar" class="user-avatar" />
-            <div class="profile-info">
-              <h2>Username</h2>
-              <p>Email: user@example.com</p>
-            </div>
-            <button class="edit-profile-btn">Edit Profile</button>
+
+  <div class="dashboard-container">
+    <div class="panel">
+      <h3>Profile</h3>
+      <div class="profile-grid">
+        <div class="user-profile">
+          <img src="https://via.placeholder.com/100" alt="Avatar" class="user-avatar" />
+          <div class="profile-info">
+            <h2>Username</h2>
+            <p>Email: user@example.com</p>
           </div>
-          <div class="badge-section">
-            <h4>Badges</h4>
-            <div class="badge-grid">
-              <div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div>
-              <div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div><div class="badge"></div>
-            </div>
-          </div>
+          <button class="edit-profile-btn">Edit Profile</button>
         </div>
-
-
-      <div class="panel">
-        <h3>Account Overview</h3>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h4>Total XP</h4>
-            <p>13,450</p>
-          </div>
-          <div class="stat-card">
-            <h4>Completed Challenges</h4>
-            <p>42</p>
-          </div>
-          <div class="stat-card">
-            <h4>Rank</h4>
-            <p>Cyber Defender</p>
+        <div class="badge-section">
+          <h4>Badges</h4>
+          <div class="badge-grid" id="badgeGrid">
+            <!-- filled by JS -->
           </div>
         </div>
       </div>
+    </div>
 
-      <div class="panel">
-        <h3>Achievements</h3>
-        <ul class="achievements-list">
-          <li>First Login - Welcome to Cool Cyber Games!</li>
-          <li>Malware Maze Master - Finished all levels</li>
-          <li>Password Champion - Scored 100% on quiz</li>
-        </ul>
+    <div class="panel">
+      <h3>Account Overview</h3>
+      <div class="stats-grid">
+        <div class="stat-card"><h4>Total XP</h4><p id="totalXp">0</p></div>
+        <div class="stat-card"><h4>Completed Challenges</h4><p id="completedChallenges">0</p></div>
+        <div class="stat-card"><h4>Rank</h4><p id="rank">New Recruit</p></div>
       </div>
+    </div>
 
-      <div class="panel">
-        <h3>Learning Progress</h3>
-        <ul class="progress-list">
-          <li>Malware Maze: <progress value="100" max="100"></progress> Completed</li>
-          <li>Master the Password: <progress value="60" max="100"></progress> In Progress</li>
-          <li>Web Quest: <progress value="0" max="100"></progress> Not Started</li>
-        </ul>
-      </div>
+    <div class="panel">
+      <h3>Achievements</h3>
+      <ul class="achievements-list" id="achievementsList">
+        <!-- filled by JS -->
+      </ul>
+    </div>
+
+    <div class="panel">
+      <h3>Learning Progress</h3>
+      <ul class="progress-list" id="progressList">
+        <!-- filled by JS -->
+      </ul>
     </div>
   </div>
 
@@ -345,63 +193,149 @@
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
   <script>
-    // Auth functionality
-    async function fetchUserData() {
-      try {
-        const response = await fetch('/api/user', { credentials: 'include' });
-        if (!response.ok) throw new Error('Not authenticated');
-        const user = await response.json();
-        updateUIForLoggedInUser(user);
-      } catch (error) {
-        updateUIForLoggedOutUser();
+    // Utility
+    const $ = (sel, root=document) => root.querySelector(sel);
+    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    const el = (t, attrs={}, children=[]) => {
+      const n = document.createElement(t);
+      for (const [k,v] of Object.entries(attrs)) {
+        if (k === 'html') n.innerHTML = v;
+        else if (k === 'class') n.className = v;
+        else n.setAttribute(k, v);
       }
-    }
+      for (const c of children) n.appendChild(c);
+      return n;
+    };
 
-    function updateUIForLoggedInUser(user) {
+    // Header auth UI
+    function updateHeaderForLoggedIn(user) {
       const avatar = document.getElementById('userAvatar');
       const name = document.getElementById('userName');
       const dropdown = document.getElementById('accountDropdown');
       const loginButton = document.getElementById('loginButton');
-
       avatar.src = user.avatar || 'https://via.placeholder.com/40';
       name.textContent = user.displayName || 'Player';
       dropdown.style.display = 'flex';
       loginButton.style.display = 'none';
     }
-
-    function updateUIForLoggedOutUser() {
+    function updateHeaderForLoggedOut() {
       const dropdown = document.getElementById('accountDropdown');
       const loginButton = document.getElementById('loginButton');
       dropdown.style.display = 'none';
       loginButton.style.display = 'block';
     }
 
-    // Initialize after DOM is ready
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchUserData();
-      setInterval(fetchUserData, 30000); // Check every 30 seconds
+    // Renderers
+    function renderProfile(user) {
+      $('.user-avatar').src = user.avatar || 'https://via.placeholder.com/100';
+      $('.profile-info h2').textContent = user.displayName || 'Player';
+      $('.profile-info p').textContent = 'Email: ' + (user.email || '');
+    }
 
-      // Attach events safely after DOM is parsed
+    function renderStats(totalPoints, perGame) {
+      const completed = (perGame || []).filter(g => g.completionBadgeUnlocked).length;
+      $('#totalXp').textContent = (totalPoints || 0).toLocaleString();
+      $('#completedChallenges').textContent = completed;
+      $('#rank').textContent = completed >= 5 ? 'Cyber Defender' : (completed >= 1 ? 'Rising Analyst' : 'New Recruit');
+    }
+
+    function renderBadges(perGame, catalogBadges=[]) {
+      const grid = $('#badgeGrid');
+      grid.innerHTML = '';
+      // unlocked keys
+      const unlocked = new Set();
+      for (const g of (perGame || [])) {
+        if (g.completionBadgeUnlocked) unlocked.add(`${g.gameKey}__completion`);
+      }
+      // Prefer catalog size/order; else fallback to 10 slots
+      const all = catalogBadges.length ? catalogBadges.map(b => b.key) : Array.from({length: Math.max(10, (perGame||[]).length)}, (_,i)=>`slot_${i}`);
+      for (const key of all) {
+        const div = el('div', { class: 'badge' });
+        if (unlocked.has(key)) div.classList.add('active');
+        grid.appendChild(div);
+      }
+    }
+
+    function renderAchievements(perGame, achCatalogByKey=new Map()) {
+      const list = $('#achievementsList'); list.innerHTML = '';
+      const keys = [].concat(...(perGame||[]).map(g => g.achievementsUnlocked || []));
+      if (!keys.length) { list.appendChild(el('li',{html:'No achievements yet—go play a game! 🎮'})); return; }
+      for (const k of keys) {
+        const meta = achCatalogByKey.get(k);
+        list.appendChild(el('li', { html: meta ? `${meta.name} — ${meta.description || ''}` : k }));
+      }
+    }
+
+    function renderProgress(perGame, achCatalogByGame=new Map()) {
+      const list = $('#progressList'); list.innerHTML = '';
+      if (!perGame.length) { list.appendChild(el('li',{html:'No progress yet.'})); return; }
+      for (const g of perGame) {
+        const thresholds = (achCatalogByGame.get(g.gameKey) || [])
+          .filter(a => a.threshold?.type === 'score')
+          .map(a => a.threshold.value).sort((a,b)=>a-b);
+        let pct = 0;
+        if (g.completionBadgeUnlocked) pct = 100;
+        else if (thresholds.length) pct = Math.min(100, Math.round((g.highScore / thresholds[thresholds.length-1]) * 100));
+        else pct = g.highScore > 0 ? 50 : 0;
+        const nice = g.gameKey.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+        const status = pct>=100 ? 'Completed' : (pct>0 ? 'In Progress' : 'Not Started');
+        list.appendChild(el('li', { html: `${nice}: <progress value="${pct}" max="100"></progress> ${status}` }));
+      }
+    }
+
+    async function loadDashboard() {
+      // 1) who am I?
+      let user = null;
+      try {
+        const r = await fetch('/api/user', { credentials: 'include' });
+        if (r.ok) {
+          user = await r.json();
+          updateHeaderForLoggedIn(user);
+        } else {
+          updateHeaderForLoggedOut();
+        }
+      } catch { updateHeaderForLoggedOut(); }
+
+      // Guests: don't try to pull private dashboard
+      if (!user) return;
+
+      // 2) user dashboard
+      const dash = await fetch('/api/dashboard', { credentials: 'include' }).then(r=>r.json());
+
+      renderProfile(dash.user || user);
+      renderStats(dash.totalPoints || 0, dash.perGame || []);
+
+      // 3) achievement/badge catalog (optional; we gracefully degrade if not present)
+      let catalog = null;
+      try {
+        const r = await fetch('/api/catalog', { credentials: 'include' });
+        if (r.ok) catalog = await r.json();
+      } catch {}
+
+      const achByKey = new Map((catalog?.achievements || []).map(a => [a.key, a]));
+      const achByGame = new Map();
+      for (const a of (catalog?.achievements || [])) {
+        if (!achByGame.has(a.gameKey)) achByGame.set(a.gameKey, []);
+        achByGame.get(a.gameKey).push(a);
+      }
+
+      renderAchievements(dash.perGame || [], achByKey);
+      renderBadges(dash.perGame || [], catalog?.badges || []);
+      renderProgress(dash.perGame || [], achByGame);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+      setInterval(loadDashboard, 60000);
+
+      // header events
       const loginBtn = document.getElementById('loginButton');
       const acctDropdown = document.getElementById('accountDropdown');
       const dropdownContent = document.getElementById('dropdownContent');
 
-      if (loginBtn) {
-        loginBtn.addEventListener('click', () => {
-          window.location.href = '/auth/google';
-        });
-      }
-
-      if (acctDropdown) {
-        acctDropdown.addEventListener('click', (e) => {
-          e.stopPropagation();
-          dropdownContent.classList.toggle('show');
-        });
-      }
-
-      window.addEventListener('click', () => {
-        dropdownContent.classList.remove('show');
-      });
+      if (loginBtn) loginBtn.addEventListener('click', () => { window.location.href = '/auth/google'; });
+      if (acctDropdown) acctDropdown.addEventListener('click', (e) => { e.stopPropagation(); dropdownContent.classList.toggle('show'); });
+      window.addEventListener('click', () => dropdownContent.classList.remove('show'));
     });
   </script>
 </body>
