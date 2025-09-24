@@ -57,8 +57,8 @@
 
     .badge-section { flex:2 1 300px; }
     .badge-section h4 { color:#00FFD0; margin-bottom:.5rem; text-shadow:0 0 5px #00FFD0; }
-    .badge-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:20px; justify-items:center; }
-    .badge { width:48px; height:48px; background: radial-gradient(circle,#1b1b1b,#111); border-radius:50%; border:2px solid #555; opacity:.4; box-shadow:0 0 10px rgba(0,216,255,.1); transition:.3s; }
+    .badge-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; justify-items:center; }
+    .badge { width:64px; height:64px; background: radial-gradient(circle,#1b1b1b,#111); border-radius:50%; border:2px solid #555; opacity:.4; box-shadow:0 0 10px rgba(0,216,255,.1); transition:.3s; }
     .badge:hover { transform:scale(1.1); border-color:#00FFD0; opacity:.8; box-shadow:0 0 15px #00FFD0; }
     /* active (unlocked) badge state */
     .badge.active { opacity:1; border-color:#00FFD0; box-shadow:0 0 15px #00FFD0; background: radial-gradient(circle,#0e2a3e,#0b1f30); }
@@ -248,7 +248,7 @@
         if (g.completionBadgeUnlocked) unlocked.add(`${g.gameKey}__completion`);
       }
       // Prefer catalog size/order; else fallback to 10 slots
-      const all = catalogBadges.length ? catalogBadges.map(b => b.key) : Array.from({length: Math.max(10, (perGame||[]).length)}, (_,i)=>`slot_${i}`);
+      const all = catalogBadges.length ? catalogBadges.map(b => b.key) : Array.from({length: Math.max(6, (perGame||[]).length)}, (_,i)=>`slot_${i}`);
       for (const key of all) {
         const div = el('div', { class: 'badge' });
         if (unlocked.has(key)) div.classList.add('active');
