@@ -663,39 +663,131 @@ if (process.env.ENABLE_SEED === 'true') {
     }
   });
 
-  // (Other)
 
-  /**********************************************************************************
- *                              CATALOG ROUTES
+/**********************************************************************************
+ *                              SAFE CODE-TRIGGERED SEED
+ *  - No Render env needed. Protect with a one-time token in the URL.
+ *  - Idempotent: upserts the 2 achievements + 1 badge for malware_maze.
+ *  - Refuses to run again once seeded, unless force=true is supplied.
  **********************************************************************************/
+const SEED_TOKEN = 'CHANGE_ME_TO_A_LONG_RANDOM_STRING_32+CHARS';
+
+function assertSeedToken(req, res) {
+  const t = (req.query.token || '').toString();
+  if (!t || t !== SEED_TOKEN) {
+    res.status(403).json({ error: 'Forbidden: bad or missing token' });
+    return false;
+  }
+  return true;
+}
+
+// Quick status route to see what’s in the catalog (protected by token)
+app.get('/admin/seed/status', async (req, res) => {
+  if (!assertSeedToken(req, res)) return;
+  try {
+    const ach = await AchievementCatalog.find({ gameKey: 'malware_maze' }).lean();
+    const badges = await BadgeCatalog.find({ gameKey: 'malware_maze' }).lean();
+    res.json({
+      ok: true,
+      achievements: ach.map(a => a.key),
+      badges: badges.map(b => b.key),
+      count: { achievements: ach.length, badges: badges.length }
+    });
+  } catch (e) {
+    console.error('seed status error', e);
+    res.status(500).json({ error: 'status failed' });
+  }
+});
+
+// Main seed (protected by token)
+app.post('/admin/seed/malware_maze', async (req, res) => {
+  if (!assertSeedToken(req, res)) return;
+  try {
+    // If already present, refuse unless force=true
+    const existingAch = await AchievementCatalog.countDocuments({ gameKey: 'malware_maze' });
+    const existingBadges = await BadgeCatalog.countDocuments({ gameKey: 'malware_maze' });
+    const forcing = String(req.query.force || 'false').toLowerCase() === 'true';
+
+    if ((existingAch >= 2 && existingBadges >= 1) && !forcing) {
+      return res.status(409).json({
+        ok: false,
+        reason: 'already_seeded',
+        hint: 'Add &force=true if you really want to re-seed (idempotent upsert).'
+      });
+    }
+
+    const ach1 = {
+      key: 'malware_maze__phish_master',
+      gameKey: 'malware_maze',
+      name: 'Phishing Master',
+      description: 'Become a master in phishing detection.',
+      // Prevent score-based auto-unlock; we unlock via /api/score completed:true
+      threshold: { type: 'score', value: 999999999 },
+      sort: 1
+    };
+    const ach2 = {
+      key: 'malware_maze__malware_expert',
+      gameKey: 'malware_maze',
+      name: 'Malware & Scam Expert',
+      description: 'Malware and scam catching expert.',
+      threshold: { type: 'score', value: 999999999 },
+      sort: 2
+    };
+    const badge = {
+      key: 'malware_maze__completion',
+      gameKey: 'malware_maze',
+      name: 'Completed Malware Maze',
+      iconUrl: '/assets/badges/malware_maze_badge.png', // ensure this file exists in your static assets
+      completionRule: 'score>0',
+      sort: 1
+    };
+
+    await AchievementCatalog.updateOne({ key: ach1.key }, { $set: ach1 }, { upsert: true });
+    await AchievementCatalog.updateOne({ key: ach2.key }, { $set: ach2 }, { upsert: true });
+    await BadgeCatalog.updateOne({ key: badge.key }, { $set: badge }, { upsert: true });
+
+    // Return current state so you can confirm
+    const nowAch = await AchievementCatalog.find({ gameKey: 'malware_maze' }).lean();
+    const nowBadges = await BadgeCatalog.find({ gameKey: 'malware_maze' }).lean();
+
+    res.json({
+      ok: true,
+      insertedOrUpdated: ['achievements x2', 'badge x1'],
+      achievements: nowAch.map(a => ({ key: a.key, name: a.name })),
+      badges: nowBadges.map(b => ({ key: b.key, name: b.name, iconUrl: b.iconUrl }))
+    });
+  } catch (e) {
+    console.error('seed error', e);
+    res.status(500).json({ error: 'seed failed' });
+  }
+});
+}
 
 // All games' achievement + badge catalogs (public)
-app.get('/api/catalog', async (req, res) => {
-  try {
-    const [ach, badges] = await Promise.all([
-      AchievementCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean(),
-      BadgeCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean()
-    ]);
-    res.json({ achievements: ach, badges });
-  } catch (e) {
-    console.error('/api/catalog error', e);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
+  app.get('/api/catalog', async (req, res) => {
+    try {
+      const [ach, badges] = await Promise.all([
+        AchievementCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean(),
+        BadgeCatalog.find({}).sort({ gameKey: 1, sort: 1 }).lean()
+      ]);
+      res.json({ achievements: ach, badges });
+    } catch (e) {
+      console.error('/api/catalog error', e);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
 
-// Single game’s catalog (public)
-app.get('/api/catalog/:gameKey', async (req, res) => {
-  try {
-    const gameKey = req.params.gameKey;
-    const [ach, badge] = await Promise.all([
-      AchievementCatalog.find({ gameKey }).sort({ sort: 1 }).lean(),
-      BadgeCatalog.findOne({ gameKey }).lean()
-    ]);
-    res.json({ gameKey, achievements: ach, badge });
-  } catch (e) {
-    console.error('/api/catalog/:gameKey error', e);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-}
+  // Single game’s catalog (public)
+  app.get('/api/catalog/:gameKey', async (req, res) => {
+    try {
+      const gameKey = req.params.gameKey;
+      const [ach, badge] = await Promise.all([
+        AchievementCatalog.find({ gameKey }).sort({ sort: 1 }).lean(),
+        BadgeCatalog.findOne({ gameKey }).lean()
+      ]);
+      res.json({ gameKey, achievements: ach, badge });
+    } catch (e) {
+      console.error('/api/catalog/:gameKey error', e);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  });
