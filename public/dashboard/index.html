@@ -69,6 +69,9 @@
       border-left:4px solid #00D8FF; box-shadow:0 0 5px #00D8FF22; transition:.3s;
     }
     .achievements-list li:hover, .progress-list li:hover { background:#102c49; box-shadow:0 0 10px #00D8FF33; }
+    .achievements-list li.locked   { opacity:.6; position:relative; }
+    .achievements-list li.locked::after { content:"🔒"; position:absolute; right:10px; top:8px; opacity:.9; }
+    .achievements-list li.unlocked { box-shadow:0 0 10px rgba(0,216,255,.25); }
 
     progress::-webkit-progress-bar { background:#222; border-radius:10px; }
     progress::-webkit-progress-value { background:linear-gradient(to right,#00FFD0,#00D8FF); border-radius:10px; box-shadow:0 0 5px #00D8FF; }
@@ -242,29 +245,68 @@
     function renderBadges(perGame, catalogBadges=[]) {
       const grid = $('#badgeGrid');
       grid.innerHTML = '';
-      // unlocked keys
+
       const unlocked = new Set();
+      const highByGame = new Map();
       for (const g of (perGame || [])) {
         if (g.completionBadgeUnlocked) unlocked.add(`${g.gameKey}__completion`);
+        highByGame.set(g.gameKey, g.highScore || 0);
       }
-      // Prefer catalog size/order; else fallback to 10 slots
-      const all = catalogBadges.length ? catalogBadges.map(b => b.key) : Array.from({length: Math.max(6, (perGame||[]).length)}, (_,i)=>`slot_${i}`);
-      for (const key of all) {
+
+      // Prefer catalog order
+      const all = catalogBadges.length ? catalogBadges : [];
+      for (const b of all) {
         const div = el('div', { class: 'badge' });
-        if (unlocked.has(key)) div.classList.add('active');
+        if (unlocked.has(b.key)) div.classList.add('active');
+
+        // Show per-game high score on hover for completion badges
+        if (b.key.endsWith('__completion')) {
+          const hs = highByGame.get(b.gameKey) || 0;
+          div.title = `High Score (${b.gameKey.replace(/_/g,' ')}): ${hs.toLocaleString()}`;
+        }
+
         grid.appendChild(div);
       }
     }
 
-    function renderAchievements(perGame, achCatalogByKey=new Map()) {
-      const list = $('#achievementsList'); list.innerHTML = '';
-      const keys = [].concat(...(perGame||[]).map(g => g.achievementsUnlocked || []));
-      if (!keys.length) { list.appendChild(el('li',{html:'No achievements yet—go play a game! 🎮'})); return; }
-      for (const k of keys) {
-        const meta = achCatalogByKey.get(k);
-        list.appendChild(el('li', { html: meta ? `${meta.name} — ${meta.description || ''}` : k }));
+
+    function renderAchievements(perGame, achCatalogByKey=new Map(), achCatalogByGame=new Map()) {
+      const list = $('#achievementsList');
+      list.innerHTML = '';
+
+      // Build unlocked set from perGame
+      const unlocked = new Set();
+      for (const g of (perGame || [])) {
+        for (const k of (g.achievementsUnlocked || [])) unlocked.add(k);
+      }
+
+      // Decide which games to show — start with malware_maze (and any others present)
+      const gamesToShow = [];
+      if (achCatalogByGame.has('malware_maze')) gamesToShow.push('malware_maze');
+      for (const g of (perGame || [])) if (!gamesToShow.includes(g.gameKey)) gamesToShow.push(g.gameKey);
+
+      if (!gamesToShow.length) {
+        list.appendChild(el('li',{html:'No achievements yet—go play a game! 🎮'}));
+        return;
+      }
+
+      for (const gameKey of gamesToShow) {
+        const items = (achCatalogByGame.get(gameKey) || []).slice().sort((a,b) => (a.sort||0)-(b.sort||0));
+        if (!items.length) continue;
+
+        // Header row per game (optional)
+        const nice = gameKey.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
+        list.appendChild(el('li', { html: `<strong>${nice}</strong>`, class: 'unlocked' }));
+
+        for (const a of items) {
+          const isUnlocked = unlocked.has(a.key);
+          const li = el('li', { class: isUnlocked ? 'unlocked' : 'locked' });
+          li.innerHTML = `<span>${a.name}</span>${a.description ? ` — <span style="opacity:.8">${a.description}</span>` : ''}`;
+          list.appendChild(li);
+        }
       }
     }
+
 
     function renderProgress(perGame, achCatalogByGame=new Map()) {
       const list = $('#progressList'); list.innerHTML = '';
@@ -319,7 +361,7 @@
         achByGame.get(a.gameKey).push(a);
       }
 
-      renderAchievements(dash.perGame || [], achByKey);
+      renderAchievements(dash.perGame || [], achByKey, achByGame);
       renderBadges(dash.perGame || [], catalog?.badges || []);
       renderProgress(dash.perGame || [], achByGame);
     }
