@@ -112,6 +112,22 @@ const BadgeCatalog         = gameDB.model('BadgeCatalog', badgeCatalogSchema);
 const UserUnlocks          = gameDB.model('UserUnlocks', userUnlocksSchema);
 
 /**********************************************************************************
+ *                              GAME→BADGE/ACH MAPS
+ **********************************************************************************/
+const COMPLETION_BADGE_BY_GAME = {
+  malware_maze: 'malware_maze__completion',
+  // password_master: 'password_master__completion', // future games
+};
+
+const MASTER_ACH_BY_GAME = {
+  malware_maze: [
+    'malware_maze__phish_master',
+    'malware_maze__malware_expert',
+  ],
+  // password_master: ['password_master__xyz', ...], // future games
+};
+
+/**********************************************************************************
  *                              SESSION CONFIGURATION
  **********************************************************************************/
 // Session Configuration
@@ -347,7 +363,9 @@ function requireAuth(req, res, next) {
  *                              POST /api/score
  *  - Upserts per-game highScore
  *  - Updates totals.totalPoints
- *  - Unlocks 2 achievements (score thresholds) + completion badge
+ *  - Unlocks thresholded achievements (Catalog)
+ *  - Unlocks completion badge
+ *  - If completed:true, also unlocks MASTER_ACH_BY_GAME[gameKey]
  **********************************************************************************/
 app.post('/api/score', requireAuth, async (req, res) => {
   try {
@@ -374,10 +392,9 @@ app.post('/api/score', requireAuth, async (req, res) => {
       newHigh = updated.highScore;
     }
 
-    // 3) Update totals if high improved
+    // 3) Update totals if high improved (sum of highs)
     let totalDoc = await Total.findOne({ userId }).lean();
     if (!totalDoc) {
-      // first time → compute sum
       const agg = await Score.aggregate([
         { $match: { userId } },
         { $group: { _id: '$userId', sum: { $sum: '$highScore' } } }
@@ -397,21 +414,21 @@ app.post('/api/score', requireAuth, async (req, res) => {
       ).lean();
     }
 
-    // 4) Unlocks
+    // 4) Ensure unlocks doc
     const now = new Date();
-    const unlockedAchievements = [];
-    const unlockedBadges = [];
-
-    // ensure doc
-    const userUnlocks = await UserUnlocks.findOneAndUpdate(
+    await UserUnlocks.findOneAndUpdate(
       { userId },
       { $setOnInsert: { achievements: [], badges: [] } },
       { upsert: true, new: true }
     );
 
-    // Achievements (score thresholds)
+    const unlockedAchievements = [];
+    const unlockedBadges = [];
+
+    // 5) Threshold-based achievements from catalog (type:score)
     const achCatalog = await AchievementCatalog.find({ gameKey }).lean();
-    const haveAch = new Set((userUnlocks.achievements || []).map(a => a.key));
+    const unlockDoc = await UserUnlocks.findOne({ userId }).lean();
+    const haveAch = new Set((unlockDoc?.achievements || []).map(a => a.key));
     for (const ach of achCatalog) {
       if (ach.threshold?.type === 'score' && newHigh >= ach.threshold.value && !haveAch.has(ach.key)) {
         await UserUnlocks.updateOne(
@@ -419,21 +436,38 @@ app.post('/api/score', requireAuth, async (req, res) => {
           { $push: { achievements: { key: ach.key, unlockedAt: now } } }
         );
         unlockedAchievements.push({ key: ach.key, name: ach.name });
+        haveAch.add(ach.key);
       }
     }
 
-    // Completion badge (rule: score>0 or explicit completed flag)
-    const badge = await BadgeCatalog.findOne({ gameKey }).lean();
-    if (badge) {
-      const haveBadge = new Set((userUnlocks.badges || []).map(b => b.key));
-      const rule = badge.completionRule || 'score>0';
+    // 6) Completion badge
+    const badgeKey = COMPLETION_BADGE_BY_GAME[gameKey];
+    if (badgeKey) {
+      const haveBadge = new Set((unlockDoc?.badges || []).map(b => b.key));
+      const badge = await BadgeCatalog.findOne({ key: badgeKey }).lean();
+      const rule = badge?.completionRule || 'score>0';
       const met = rule === 'score>0' ? (newHigh > 0 || score > 0) : !!completed;
-      if (met && !haveBadge.has(badge.key)) {
+      if (met && !haveBadge.has(badgeKey)) {
         await UserUnlocks.updateOne(
-          { userId, 'badges.key': { $ne: badge.key } },
-          { $push: { badges: { key: badge.key, unlockedAt: now } } }
+          { userId, 'badges.key': { $ne: badgeKey } },
+          { $push: { badges: { key: badgeKey, unlockedAt: now } } }
         );
-        unlockedBadges.push({ key: badge.key, name: badge.name });
+        unlockedBadges.push({ key: badgeKey, name: badge?.name || 'Completed' });
+      }
+    }
+
+    // 7) If completed:true, auto-unlock this game’s "master" achievements
+    if (completed) {
+      const masterKeys = MASTER_ACH_BY_GAME[gameKey] || [];
+      for (const key of masterKeys) {
+        if (!haveAch.has(key)) {
+          await UserUnlocks.updateOne(
+            { userId, 'achievements.key': { $ne: key } },
+            { $push: { achievements: { key, unlockedAt: now } } }
+          );
+          unlockedAchievements.push({ key });
+          haveAch.add(key);
+        }
       }
     }
 
@@ -450,6 +484,41 @@ app.post('/api/score', requireAuth, async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+/**********************************************************************************
+ *                              POST /api/unlock
+ *  - Unlock a specific achievement by key (idempotent)
+ **********************************************************************************/
+app.post('/api/unlock', requireAuth, async (req, res) => {
+  try {
+    const { key } = req.body;
+    if (!key) return res.status(400).json({ error: 'key is required' });
+
+    const userId = req.user._id;
+    const now = new Date();
+
+    // See if it's an achievement or a badge in the catalog
+    const isAch = await AchievementCatalog.findOne({ key }).lean();
+    const isBadge = !isAch ? await BadgeCatalog.findOne({ key }).lean() : null;
+
+    if (!isAch && !isBadge) return res.status(404).json({ error: 'Catalog key not found' });
+
+    const setOn = isAch ? { achievements: { key, unlockedAt: now } } : { badges: { key, unlockedAt: now } };
+    const field = isAch ? 'achievements.key' : 'badges.key';
+
+    await UserUnlocks.updateOne(
+      { userId, [field]: { $ne: key } },
+      { $push: setOn },
+      { upsert: true }
+    );
+
+    res.json({ ok: true, key, type: isAch ? 'achievement' : 'badge' });
+  } catch (e) {
+    console.error('/api/unlock error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 /**********************************************************************************
  *                              GET /api/dashboard
@@ -500,6 +569,8 @@ app.get('/api/dashboard', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
 
 /**********************************************************************************
  *                              GET /api/leaderboard
@@ -557,26 +628,26 @@ if (process.env.ENABLE_SEED === 'true') {
   app.post('/admin/seed/malware_maze', async (req, res) => {
     try {
       const ach1 = {
-        key: 'malware_maze__a1',
+        key: 'malware_maze__phish_master',
         gameKey: 'malware_maze',
-        name: 'Malware Master',
-        description: 'Score 1,000+ in Malware Maze.',
-        threshold: { type: 'score', value: 5000 },
+        name: 'Phishing Master',
+        description: 'Become a master in phishing detection.',
+        threshold: { type: 'score', value: 999999999 }, // avoid score auto-unlock
         sort: 1
       };
       const ach2 = {
-        key: 'malware_maze__a2',
+        key: 'malware_maze__malware_expert',
         gameKey: 'malware_maze',
-        name: 'Threat Neutralizer',
-        description: 'Score 3,000+ in Malware Maze.',
-        threshold: { type: 'score', value: 10000 },
+        name: 'Malware & Scam Expert',
+        description: 'Malware and scam catching expert.',
+        threshold: { type: 'score', value: 999999999 }, // avoid score auto-unlock
         sort: 2
       };
       const badge = {
         key: 'malware_maze__completion',
         gameKey: 'malware_maze',
         name: 'Completed Malware Maze',
-        iconUrl: '/assets/badges/malware_maze.svg',
+        iconUrl: '/assets/badges/malware_maze_badge.png',
         completionRule: 'score>0',
         sort: 1
       };
