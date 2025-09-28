@@ -41,6 +41,35 @@
       text-shadow: 0 0 5px #00D8FF;
     }
 
+    /* Badge tile */
+    .badge {
+      width: 72px; height: 72px;
+      border-radius: 14px;
+      background: #0b1524;
+      border: 1px solid #233a57;
+      display: grid; place-items: center;
+      box-shadow: 0 0 10px rgba(0,216,255,.1);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .badge:hover { transform: scale(1.06); box-shadow: 0 0 15px rgba(0,216,255,.25); }
+
+    /* Inner icon — we color it via background-color, the PNG is only a mask */
+    .badge .icon {
+      width: 56px; height: 56px;
+      -webkit-mask: var(--mask-url) center/contain no-repeat;
+              mask: var(--mask-url) center/contain no-repeat;
+      background-color: #b8c2cc;   /* light grey for LOCKED */
+      opacity: .85;
+      transition: background-color .2s, opacity .2s, filter .2s;
+    }
+
+    /* UNLOCKED */
+    .badge.active .icon {
+      background-color: #00d8ff;   /* cyan */
+      opacity: 1;
+      filter: drop-shadow(0 0 8px rgba(0,216,255,.8));
+    }
+
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
     .stat-card {
       background: #0d2039; padding: 1.5rem; border-radius: 10px;
@@ -242,10 +271,11 @@
       $('#rank').textContent = completed >= 5 ? 'Cyber Defender' : (completed >= 1 ? 'Rising Analyst' : 'New Recruit');
     }
 
-    function renderBadges(perGame, catalogBadges=[]) {
+    function renderBadges(perGame, catalogBadges = []) {
       const grid = $('#badgeGrid');
       grid.innerHTML = '';
 
+      // which badge keys are unlocked?
       const unlocked = new Set();
       const highByGame = new Map();
       for (const g of (perGame || [])) {
@@ -253,19 +283,30 @@
         highByGame.set(g.gameKey, g.highScore || 0);
       }
 
-      // Prefer catalog order
+      // Use catalog order; if empty, show nothing (means you need to seed)
       const all = catalogBadges.length ? catalogBadges : [];
-      for (const b of all) {
-        const div = el('div', { class: 'badge' });
-        if (unlocked.has(b.key)) div.classList.add('active');
 
-        // Show per-game high score on hover for completion badges
+      const ICON_URL = '/assets/icons/badge.png'; // <— same icon for every badge
+
+      for (const b of all) {
+        const tile = el('div', { class: 'badge' });
+        const icon = el('div', { class: 'icon' });
+
+        // apply the mask
+        icon.style.setProperty('--mask-url', `url("${ICON_URL}")`);
+
+        if (unlocked.has(b.key)) tile.classList.add('active');
+
+        // helpful tooltip (shows HS if it's a completion badge)
         if (b.key.endsWith('__completion')) {
           const hs = highByGame.get(b.gameKey) || 0;
-          div.title = `High Score (${b.gameKey.replace(/_/g,' ')}): ${hs.toLocaleString()}`;
+          tile.title = `${b.name || 'Completed'} — High Score: ${hs.toLocaleString()}`;
+        } else {
+          tile.title = b.name || b.key.replace(/_/g, ' ');
         }
 
-        grid.appendChild(div);
+        tile.appendChild(icon);
+        grid.appendChild(tile);
       }
     }
 
