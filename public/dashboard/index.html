@@ -3,101 +3,152 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard | Cool Cyber Games</title>
+  <title>Leaderboard | Cool Cyber Games</title>
   <link rel="stylesheet" href="../css/style.css" />
   <style>
     body {
-      background: radial-gradient(ellipse at top left, #0a192f, #050c16);
+      background: #0a192f;
       color: #E0E0E0;
       font-family: 'Segoe UI', sans-serif;
+      margin: 0;
       padding: 2rem;
-      overflow-x: hidden;
     }
 
-    .dashboard-container {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2rem;
-      max-width: 1300px;
+    .leaderboard-container {
+      max-width: 1200px;
       margin: 0 auto;
+      text-align: center;
     }
 
-    .panel {
-      background: linear-gradient(145deg, #0d223f, #08192d);
-      border-radius: 12px;
-      padding: 1.5rem;
-      border: 2px solid #00D8FF33;
-      box-shadow: 0 0 20px rgba(0, 216, 255, 0.2), inset 0 0 15px rgba(0, 216, 255, 0.1);
-      width: 100%;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    .leaderboard-title {
+      font-size: 2.5rem;
+      color: #00FF99;
+      text-shadow: 0 0 8px #00FF99;
     }
-    .panel:hover { transform: scale(1.01); box-shadow: 0 0 30px rgba(0,255,200,.3), inset 0 0 20px rgba(0,200,255,.2); }
 
-    .panel h3 {
+    .leaderboard-subtext {
+      color: #ccc;
+      margin-top: 0.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .top-three {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      min-height: 170px;
+    }
+
+    .podium {
+      background: #112240;
+      border: 2px solid #00D8FF44;
+      box-shadow: 0 0 10px #00D8FF33;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+    }
+
+    .podium img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      object-fit: cover;
+    }
+
+    .podium h4 {
+      margin: 0.5rem 0 0.25rem;
       color: #00D8FF;
-      border-bottom: 2px solid #00D8FF;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
-      text-shadow: 0 0 5px #00D8FF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
-    .stat-card {
-      background: #0d2039; padding: 1.5rem; border-radius: 10px;
-      border: 1px solid #00D8FF33; box-shadow: 0 0 10px #00D8FF22; text-align: center; transition: .3s;
+    .volume-label {
+      font-size: 0.85rem;
+      color: #aaa;
     }
-    .stat-card:hover { background:#102c49; box-shadow:0 0 20px #00D8FF55; }
 
-    .profile-grid { display:flex; flex-wrap:wrap; gap:2rem; align-items:flex-start; }
-    .user-profile { text-align:center; flex:1 1 200px; }
-    .user-avatar { width:100px; height:100px; border-radius:50%; border:3px solid #00D8FF; object-fit:cover; margin-bottom:1rem; box-shadow:0 0 15px #00D8FF; }
-    .profile-info h2 { margin:.2rem 0; color:#00D8FF; }
-    .edit-profile-btn { background:#00D8FF; color:#121212; border:none; padding:.6rem 1rem; border-radius:8px; cursor:pointer; font-weight:bold; margin-top:1rem; transition:.3s; }
-    .edit-profile-btn:hover { background:#00bfff; box-shadow:0 0 10px #00bfff; }
-
-    .badge-section { flex:2 1 300px; }
-    .badge-section h4 { color:#00FFD0; margin-bottom:.5rem; text-shadow:0 0 5px #00FFD0; }
-    .badge-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; justify-items:center; }
-    .badge { width:64px; height:64px; background: radial-gradient(circle,#1b1b1b,#111); border-radius:50%; border:2px solid #555; opacity:.4; box-shadow:0 0 10px rgba(0,216,255,.1); transition:.3s; }
-    .badge:hover { transform:scale(1.1); border-color:#00FFD0; opacity:.8; box-shadow:0 0 15px #00FFD0; }
-    /* active (unlocked) badge state */
-    .badge.active { opacity:1; border-color:#00FFD0; box-shadow:0 0 15px #00FFD0; background: radial-gradient(circle,#0e2a3e,#0b1f30); }
-
-    .achievements-list, .progress-list { list-style:none; padding:0; }
-    .achievements-list li, .progress-list li {
-      padding:.75rem 1rem; background:#0d2039; border-radius:8px; margin-bottom:.5rem;
-      border-left:4px solid #00D8FF; box-shadow:0 0 5px #00D8FF22; transition:.3s;
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #0f223a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 216, 255, 0.15);
     }
-    .achievements-list li:hover, .progress-list li:hover { background:#102c49; box-shadow:0 0 10px #00D8FF33; }
-    .achievements-list li.locked   { opacity:.6; position:relative; }
-    .achievements-list li.locked::after { content:"🔒"; position:absolute; right:10px; top:8px; opacity:.9; }
-    .achievements-list li.unlocked { box-shadow:0 0 10px rgba(0,216,255,.25); }
 
-    progress::-webkit-progress-bar { background:#222; border-radius:10px; }
-    progress::-webkit-progress-value { background:linear-gradient(to right,#00FFD0,#00D8FF); border-radius:10px; box-shadow:0 0 5px #00D8FF; }
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #1e3a5e;
+    }
 
-    /* Dropdown visibility toggle */
-    .dropdown-content { display:none; position:absolute; background:#0d223f; border:1px solid #00D8FF33; border-radius:8px; padding:.5rem; margin-top:.5rem; }
-    .dropdown-content.show { display:block; }
+    .leaderboard-table th {
+      background-color: #0d2039;
+      color: #00D8FF;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-table tr:hover {
+      background-color: #102c49;
+    }
+
+    .rank-highlight {
+      color: #00FF99;
+      font-weight: bold;
+    }
+
+    .you {
+      color: #FF6900;
+      font-weight: bold;
+    }
+
+    /* Blur & Overlay */
+    .coming-soon-container {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+      position: relative;
+    }
+
+    .coming-soon-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background-color: rgba(10, 25, 47, 0.95);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      text-align: center;
+      color: #00ffe0;
+      font-size: 2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ffe0;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
+    }
   </style>
 </head>
 <body>
   <nav class="navbar">
     <div class="navbar-container">
       <a href="../" class="navbar-brand">
-        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height:32px;width:32px;">
+        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
         <span>Cool Cyber Games</span>
       </a>
-
       <div class="navbar-links">
         <a href="../" class="nav-link">Home</a>
         <a href="../games/" class="nav-link">Games</a>
-        <a href="../dashboard/" class="nav-link active">Dashboard</a>
-        <a href="../leaderboard/" class="nav-link">Leaderboard</a>
+        <a href="../dashboard/" class="nav-link">Dashboard</a>
+        <a href="../leaderboard/" class="nav-link active">Leaderboard</a>
       </div>
-
       <div class="auth-section">
-        <div class="account-dropdown" id="accountDropdown" style="display:none;">
+        <div class="account-dropdown" id="accountDropdown" style="display: none;">
           <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
           <span id="userName"></span>
           <div class="dropdown-content" id="dropdownContent">
@@ -110,48 +161,30 @@
     </div>
   </nav>
 
-  <div class="dashboard-container">
-    <div class="panel">
-      <h3>Profile</h3>
-      <div class="profile-grid">
-        <div class="user-profile">
-          <img src="https://via.placeholder.com/100" alt="Avatar" class="user-avatar" />
-          <div class="profile-info">
-            <h2>Username</h2>
-            <p>Email: user@example.com</p>
-          </div>
-          <button class="edit-profile-btn">Edit Profile</button>
-        </div>
-        <div class="badge-section">
-          <h4>Badges</h4>
-          <div class="badge-grid" id="badgeGrid">
-            <!-- filled by JS -->
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="coming-soon-overlay">🚧 Loading Leaderboard… 🚧</div>
 
-    <div class="panel">
-      <h3>Account Overview</h3>
-      <div class="stats-grid">
-        <div class="stat-card"><h4>Total XP</h4><p id="totalXp">0</p></div>
-        <div class="stat-card"><h4>Completed Challenges</h4><p id="completedChallenges">0</p></div>
-        <div class="stat-card"><h4>Rank</h4><p id="rank">New Recruit</p></div>
-      </div>
-    </div>
+  <div class="coming-soon-container">
+    <div class="leaderboard-container">
+      <h1 class="leaderboard-title">Global Leaderboard</h1>
+      <p class="leaderboard-subtext">Climb the ranks by solving challenges, completing games, and mastering cybersecurity skills.</p>
 
-    <div class="panel">
-      <h3>Achievements</h3>
-      <ul class="achievements-list" id="achievementsList">
-        <!-- filled by JS -->
-      </ul>
-    </div>
+      <div class="top-three" id="topThree"></div>
 
-    <div class="panel">
-      <h3>Learning Progress</h3>
-      <ul class="progress-list" id="progressList">
-        <!-- filled by JS -->
-      </ul>
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>XP</th>
+            <th>Challenges</th>
+            <th>Games Completed</th>
+            <th>Accuracy</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr><td colspan="6" style="padding:1.5rem;color:#9bb3cf;">Fetching live data…</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 
@@ -164,8 +197,7 @@
           <li><a href="/">Home</a></li>
           <li><a href="/games">Games</a></li>
           <li><a href="/dashboard">Dashboard</a></li>
-          <li><a href="/about">About</a></li>
-          <li><a href="/contact">Contact</a></li>
+          <li><a href="/leaderboard">Leaderboard</a></li>
         </ul>
       </div>
       <div class="footer-section">
@@ -196,188 +228,152 @@
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
   <script>
-    // Utility
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-    const el = (t, attrs={}, children=[]) => {
-      const n = document.createElement(t);
-      for (const [k,v] of Object.entries(attrs)) {
-        if (k === 'html') n.innerHTML = v;
-        else if (k === 'class') n.className = v;
-        else n.setAttribute(k, v);
+    // ---------- Auth UI ----------
+    async function fetchUserData() {
+      try {
+        const response = await fetch('/api/user', { credentials: 'include' });
+        if (!response.ok) throw new Error('Not authenticated');
+        const user = await response.json();
+        updateUIForLoggedInUser(user);
+        return user;
+      } catch (error) {
+        updateUIForLoggedOutUser();
+        return null;
       }
-      for (const c of children) n.appendChild(c);
-      return n;
-    };
+    }
 
-    // Header auth UI
-    function updateHeaderForLoggedIn(user) {
+    function updateUIForLoggedInUser(user) {
       const avatar = document.getElementById('userAvatar');
       const name = document.getElementById('userName');
       const dropdown = document.getElementById('accountDropdown');
       const loginButton = document.getElementById('loginButton');
-      avatar.src = user.avatar || 'https://via.placeholder.com/40';
-      name.textContent = user.displayName || 'Player';
-      dropdown.style.display = 'flex';
-      loginButton.style.display = 'none';
+
+      if (avatar) avatar.src = user.avatar || 'https://via.placeholder.com/40';
+      if (name) name.textContent = user.displayName || 'You';
+      if (dropdown) dropdown.style.display = 'flex';
+      if (loginButton) loginButton.style.display = 'none';
     }
-    function updateHeaderForLoggedOut() {
+
+    function updateUIForLoggedOutUser() {
       const dropdown = document.getElementById('accountDropdown');
       const loginButton = document.getElementById('loginButton');
-      dropdown.style.display = 'none';
-      loginButton.style.display = 'block';
+      if (dropdown) dropdown.style.display = 'none';
+      if (loginButton) loginButton.style.display = 'block';
     }
 
-    // Renderers
-    function renderProfile(user) {
-      $('.user-avatar').src = user.avatar || 'https://via.placeholder.com/100';
-      $('.profile-info h2').textContent = user.displayName || 'Player';
-      $('.profile-info p').textContent = 'Email: ' + (user.email || '');
+    // ---------- Leaderboard ----------
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
     }
 
-    function renderStats(totalPoints, perGame) {
-      const completed = (perGame || []).filter(g => g.completionBadgeUnlocked).length;
-      $('#totalXp').textContent = (totalPoints || 0).toLocaleString();
-      $('#completedChallenges').textContent = completed;
-      $('#rank').textContent = completed >= 5 ? 'Cyber Defender' : (completed >= 1 ? 'Rising Analyst' : 'New Recruit');
-    }
-
-    function renderBadges(perGame, catalogBadges=[]) {
-      const grid = $('#badgeGrid');
-      grid.innerHTML = '';
-
-      const unlocked = new Set();
-      const highByGame = new Map();
-      for (const g of (perGame || [])) {
-        if (g.completionBadgeUnlocked) unlocked.add(`${g.gameKey}__completion`);
-        highByGame.set(g.gameKey, g.highScore || 0);
-      }
-
-      // Prefer catalog order
-      const all = catalogBadges.length ? catalogBadges : [];
-      for (const b of all) {
-        const div = el('div', { class: 'badge' });
-        if (unlocked.has(b.key)) div.classList.add('active');
-
-        // Show per-game high score on hover for completion badges
-        if (b.key.endsWith('__completion')) {
-          const hs = highByGame.get(b.gameKey) || 0;
-          div.title = `High Score (${b.gameKey.replace(/_/g,' ')}): ${hs.toLocaleString()}`;
-        }
-
-        grid.appendChild(div);
+    function unblur() {
+      const overlay = document.querySelector('.coming-soon-overlay');
+      const blurred = document.querySelector('.coming-soon-container');
+      if (overlay) overlay.remove();
+      if (blurred) {
+        blurred.style.filter = 'none';
+        blurred.style.pointerEvents = 'auto';
+        blurred.style.userSelect = 'auto';
       }
     }
 
+    function renderPodium(container, top3) {
+      container.innerHTML = '';
+      const card = (e, big=false)=>`
+        <div class="podium" style="${big?'transform:scale(1.1);':''}">
+          <img src="${e.avatar || 'https://via.placeholder.com/64'}" alt="Top ${e.rank}">
+          <h4 class="${e.rank===1?'rank-highlight':''}">[${e.rank}] ${escapeHtml(e.displayName||'Player')}</h4>
+          <div class="volume-label">${Number(e.totalPoints||0).toLocaleString()} XP</div>
+        </div>`;
+      if (!top3.length) return;
+      if (top3.length===1) { container.innerHTML = card(top3[0], true); return; }
+      if (top3.length===2) { container.innerHTML = card(top3[1]) + card(top3[0], true); return; }
+      const one = top3.find(r=>r.rank===1);
+      const two = top3.find(r=>r.rank===2);
+      const three = top3.find(r=>r.rank===3);
+      container.innerHTML = (two?card(two):'') + (one?card(one,true):'') + (three?card(three):'');
+    }
 
-    function renderAchievements(perGame, achCatalogByKey=new Map(), achCatalogByGame=new Map()) {
-      const list = $('#achievementsList');
-      list.innerHTML = '';
-
-      // Build unlocked set from perGame
-      const unlocked = new Set();
-      for (const g of (perGame || [])) {
-        for (const k of (g.achievementsUnlocked || [])) unlocked.add(k);
-      }
-
-      // Decide which games to show — start with malware_maze (and any others present)
-      const gamesToShow = [];
-      if (achCatalogByGame.has('malware_maze')) gamesToShow.push('malware_maze');
-      for (const g of (perGame || [])) if (!gamesToShow.includes(g.gameKey)) gamesToShow.push(g.gameKey);
-
-      if (!gamesToShow.length) {
-        list.appendChild(el('li',{html:'No achievements yet—go play a game! 🎮'}));
-        return;
-      }
-
-      for (const gameKey of gamesToShow) {
-        const items = (achCatalogByGame.get(gameKey) || []).slice().sort((a,b) => (a.sort||0)-(b.sort||0));
-        if (!items.length) continue;
-
-        // Header row per game (optional)
-        const nice = gameKey.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
-        list.appendChild(el('li', { html: `<strong>${nice}</strong>`, class: 'unlocked' }));
-
-        for (const a of items) {
-          const isUnlocked = unlocked.has(a.key);
-          const li = el('li', { class: isUnlocked ? 'unlocked' : 'locked' });
-          li.innerHTML = `<span>${a.name}</span>${a.description ? ` — <span style="opacity:.8">${a.description}</span>` : ''}`;
-          list.appendChild(li);
-        }
+    function renderTable(tbody, items, meId) {
+      tbody.innerHTML = '';
+      for (const e of items.sort((a,b)=>a.rank-b.rank)) {
+        const isYou = meId && e.userId === meId;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="${e.rank===1?'rank-highlight':''}">[${e.rank}]</td>
+          <td class="${isYou?'you':''}">${escapeHtml(isYou ? 'You' : (e.displayName || 'Player'))}</td>
+          <td>${Number(e.totalPoints||0).toLocaleString()}</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        `;
+        tbody.appendChild(tr);
       }
     }
 
-
-    function renderProgress(perGame, achCatalogByGame=new Map()) {
-      const list = $('#progressList'); list.innerHTML = '';
-      if (!perGame.length) { list.appendChild(el('li',{html:'No progress yet.'})); return; }
-      for (const g of perGame) {
-        const thresholds = (achCatalogByGame.get(g.gameKey) || [])
-          .filter(a => a.threshold?.type === 'score')
-          .map(a => a.threshold.value).sort((a,b)=>a-b);
-        let pct = 0;
-        if (g.completionBadgeUnlocked) pct = 100;
-        else if (thresholds.length) pct = Math.min(100, Math.round((g.highScore / thresholds[thresholds.length-1]) * 100));
-        else pct = g.highScore > 0 ? 50 : 0;
-        const nice = g.gameKey.replace(/_/g,' ').replace(/\b\w/g, c => c.toUpperCase());
-        const status = pct>=100 ? 'Completed' : (pct>0 ? 'In Progress' : 'Not Started');
-        list.appendChild(el('li', { html: `${nice}: <progress value="${pct}" max="100"></progress> ${status}` }));
-      }
+    async function fetchLeaderboard(limit=100, offset=0) {
+      const res = await fetch(`/api/leaderboard?limit=${limit}&offset=${offset}`);
+      if (!res.ok) throw new Error('Failed to load leaderboard');
+      return res.json(); // { items, nextOffset }
     }
 
-    async function loadDashboard() {
-      // 1) who am I?
-      let user = null;
+    // ---------- Init ----------
+    document.addEventListener('DOMContentLoaded', async () => {
+      const me = await fetchUserData();
+      const meId = me?.id || null;
+
       try {
-        const r = await fetch('/api/user', { credentials: 'include' });
-        if (r.ok) {
-          user = await r.json();
-          updateHeaderForLoggedIn(user);
-        } else {
-          updateHeaderForLoggedOut();
+        const data = await fetchLeaderboard(100, 0);
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        unblur();
+
+        const podiumWrap = document.getElementById('topThree');
+        const tbody = document.getElementById('leaderboardBody');
+
+        if (!items.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#ccc;">No players yet. Be the first to earn XP!</td></tr>`;
+          return;
         }
-      } catch { updateHeaderForLoggedOut(); }
 
-      // Guests: don't try to pull private dashboard
-      if (!user) return;
-
-      // 2) user dashboard
-      const dash = await fetch('/api/dashboard', { credentials: 'include' }).then(r=>r.json());
-
-      renderProfile(dash.user || user);
-      renderStats(dash.totalPoints || 0, dash.perGame || []);
-
-      // 3) achievement/badge catalog (optional; we gracefully degrade if not present)
-      let catalog = null;
-      try {
-        const r = await fetch('/api/catalog', { credentials: 'include' });
-        if (r.ok) catalog = await r.json();
-      } catch {}
-
-      const achByKey = new Map((catalog?.achievements || []).map(a => [a.key, a]));
-      const achByGame = new Map();
-      for (const a of (catalog?.achievements || [])) {
-        if (!achByGame.has(a.gameKey)) achByGame.set(a.gameKey, []);
-        achByGame.get(a.gameKey).push(a);
+        renderPodium(podiumWrap, items.slice(0,3));
+        renderTable(tbody, items, meId);
+      } catch (e) {
+        console.error(e);
+        const tbody = document.getElementById('leaderboardBody');
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#f39c9c;">Failed to load leaderboard.</td></tr>`;
+        }
       }
 
-      renderAchievements(dash.perGame || [], achByKey, achByGame);
-      renderBadges(dash.perGame || [], catalog?.badges || []);
-      renderProgress(dash.perGame || [], achByGame);
+      // Optional: keep auth header fresh
+      setInterval(fetchUserData, 30000);
+    });
+
+    // Handle login button click
+    const loginBtn = document.getElementById('loginButton');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        window.location.href = '/auth/google';
+      });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadDashboard();
-      setInterval(loadDashboard, 60000);
+    // Handle dropdown toggle
+    const acct = document.getElementById('accountDropdown');
+    if (acct) {
+      acct.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('dropdownContent').classList.toggle('show');
+      });
+    }
 
-      // header events
-      const loginBtn = document.getElementById('loginButton');
-      const acctDropdown = document.getElementById('accountDropdown');
-      const dropdownContent = document.getElementById('dropdownContent');
-
-      if (loginBtn) loginBtn.addEventListener('click', () => { window.location.href = '/auth/google'; });
-      if (acctDropdown) acctDropdown.addEventListener('click', (e) => { e.stopPropagation(); dropdownContent.classList.toggle('show'); });
-      window.addEventListener('click', () => dropdownContent.classList.remove('show'));
+    // Close dropdown when clicking outside
+    window.addEventListener('click', () => {
+      const dd = document.getElementById('dropdownContent');
+      if (dd) dd.classList.remove('show');
     });
   </script>
 </body>

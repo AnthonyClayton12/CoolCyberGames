@@ -262,16 +262,15 @@ app.get('/auth/logout', (req, res, next) => {
 
 // API Routes
 app.get('/api/user', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return res.json({
       id: req.user.id,
       displayName: req.user.displayName,
       email: req.user.email,
       avatar: req.user.avatar
     });
-  } else {
-    res.status(401).json({ error: 'Not authenticated' });
   }
+  return res.status(401).json({ error: 'Not authenticated' });
 });
 
 app.get('/api/test', (req, res) => {
@@ -317,6 +316,7 @@ app.get('/', serveStatic('index.html'));
 app.get('/about', serveStatic('about/index.html'));
 app.get('/contact', serveStatic('contact/index.html'));
 app.get('/dashboard', (req, res) => res.sendFile(`${__dirname}/public/dashboard/index.html`));
+app.get('/leaderboard', serveStatic('leaderboard/index.html')); 
 app.get('/games/malware_maze', serveStatic('games/malware_maze/index.html'));
 app.get('/games/phaser_game_1', serveStatic('games/phaser_game_1/index.html'));
 app.get('/user/login', serveStatic('user/login.html'));
@@ -762,6 +762,44 @@ app.post('/admin/seed/malware_maze', async (req, res) => {
   }
 });
 }
+
+app.get('/api/leaderboard', async (req, res) => {
+  try {
+    const limit = Math.min(parseInt(req.query.limit || '50', 10), 200);
+    const offset = Math.max(parseInt(req.query.offset || '0', 10), 0);
+
+    const totals = await Total.find({})
+      .sort({ totalPoints: -1, _id: 1 })
+      .skip(offset)
+      .limit(limit)
+      .lean();
+
+    const userIds = totals.map(t => t.userId);
+    const users = await User.find({ _id: { $in: userIds } })
+      .select('_id displayName avatar')
+      .lean();
+
+    const uMap = new Map(users.map(u => [String(u._id), u]));
+
+    const startRank = offset + 1;
+    const items = totals.map((t, i) => {
+      const u = uMap.get(String(t.userId)) || {};
+      return {
+        rank: startRank + i,
+        userId: String(t.userId),
+        displayName: u.displayName || 'Player',
+        avatar: u.avatar || 'https://via.placeholder.com/40',
+        totalPoints: t.totalPoints
+      };
+    });
+
+    res.json({ items, nextOffset: offset + items.length });
+  } catch (e) {
+    console.error('/api/leaderboard error', e);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 // All games' achievement + badge catalogs (public)
   app.get('/api/catalog', async (req, res) => {
