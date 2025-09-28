@@ -39,6 +39,7 @@
       align-items: flex-end;
       gap: 2rem;
       margin-bottom: 3rem;
+      min-height: 170px;
     }
 
     .podium {
@@ -55,11 +56,15 @@
       height: 64px;
       border-radius: 8px;
       margin-bottom: 0.5rem;
+      object-fit: cover;
     }
 
     .podium h4 {
       margin: 0.5rem 0 0.25rem;
       color: #00D8FF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .volume-label {
@@ -156,29 +161,14 @@
     </div>
   </nav>
 
-  <div class="coming-soon-overlay">🚧 Coming Soon 🚧</div>
+  <div class="coming-soon-overlay">🚧 Loading Leaderboard… 🚧</div>
 
   <div class="coming-soon-container">
     <div class="leaderboard-container">
+      <h1 class="leaderboard-title">Global Leaderboard</h1>
       <p class="leaderboard-subtext">Climb the ranks by solving challenges, completing games, and mastering cybersecurity skills.</p>
 
-      <div class="top-three">
-        <div class="podium">
-          <img src="../avatars/avatar2.png" alt="Top 2">
-          <h4>[2] shadowfox</h4>
-          <div class="volume-label">1,650 XP</div>
-        </div>
-        <div class="podium" style="transform: scale(1.1);">
-          <img src="../avatars/avatar1.png" alt="Top 1">
-          <h4 class="rank-highlight">[1] cyberking</h4>
-          <div class="volume-label">1,820 XP</div>
-        </div>
-        <div class="podium">
-          <img src="../avatars/avatar3.png" alt="Top 3">
-          <h4>[3] malwaremaestro</h4>
-          <div class="volume-label">1,540 XP</div>
-        </div>
-      </div>
+      <div class="top-three" id="topThree"></div>
 
       <table class="leaderboard-table">
         <thead>
@@ -191,142 +181,200 @@
             <th>Accuracy</th>
           </tr>
         </thead>
-        <tbody>
-          <tr>
-            <td>Unranked</td>
-            <td class="you">You</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0</td>
-            <td>0%</td>
-          </tr>
-          <tr>
-            <td class="rank-highlight">[1]</td>
-            <td>cyberking</td>
-            <td>1820</td>
-            <td>55</td>
-            <td>4</td>
-            <td>98%</td>
-          </tr>
-          <tr>
-            <td>[2]</td>
-            <td>shadowfox</td>
-            <td>1650</td>
-            <td>48</td>
-            <td>3</td>
-            <td>95%</td>
-          </tr>
-          <tr>
-            <td>[3]</td>
-            <td>malwaremaestro</td>
-            <td>1540</td>
-            <td>40</td>
-            <td>1</td>
-            <td>93%</td>
-          </tr>
+        <tbody id="leaderboardBody">
+          <tr><td colspan="6" style="padding:1.5rem;color:#9bb3cf;">Fetching live data…</td></tr>
         </tbody>
       </table>
     </div>
   </div>
 
   <footer class="footer">
-        <div class="footer-content">
-            <div class="glow-line"></div>
-            <div class="footer-section">
-                <h3>Navigation</h3>
-                <ul class="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/games">Games</a></li>
-                    <li><a href="/dashboard">Dashboard</a></li>
-                    <li><a href="/leaderboard">Leaderboard</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>About</h3>
-                <ul class="footer-links">
-                    <li><a href="/about">About Us</a></li>
-                    <li><a href="/contact">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Legal</h3>
-                <ul class="footer-links">
-                    <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
-                    <li><a href="user/terms-of-service.html">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Social</h3>
-                <ul class="footer-links">
-                    <li><a href="https://x.com/coolcybergames">Twitter</a></li>
-                    <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
-                    <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
-                </ul>
-            </div>
-        </div>
-    </footer>
-  
+    <div class="footer-content">
+      <div class="glow-line"></div>
+      <div class="footer-section">
+        <h3>Navigation</h3>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games">Games</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/leaderboard">Leaderboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>About</h3>
+        <ul class="footer-links">
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="user/terms-of-service.html">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Social</h3>
+        <ul class="footer-links">
+          <li><a href="https://x.com/coolcybergames">Twitter</a></li>
+          <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
+          <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
   <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
-    <script>
-        // Auth functionality
-        async function fetchUserData() {
-            try {
-                const response = await fetch('/api/user', {
-                    credentials: 'include'
-                });
-                
-                if (!response.ok) throw new Error('Not authenticated');
-                
-                const user = await response.json();
-                updateUIForLoggedInUser(user);
-            } catch (error) {
-                updateUIForLoggedOutUser();
-            }
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+  <script>
+    // ---------- Auth UI ----------
+    async function fetchUserData() {
+      try {
+        const response = await fetch('/api/user', { credentials: 'include' });
+        if (!response.ok) throw new Error('Not authenticated');
+        const user = await response.json();
+        updateUIForLoggedInUser(user);
+        return user;
+      } catch (error) {
+        updateUIForLoggedOutUser();
+        return null;
+      }
+    }
+
+    function updateUIForLoggedInUser(user) {
+      const avatar = document.getElementById('userAvatar');
+      const name = document.getElementById('userName');
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
+
+      if (avatar) avatar.src = user.avatar || 'https://via.placeholder.com/40';
+      if (name) name.textContent = user.displayName || 'You';
+      if (dropdown) dropdown.style.display = 'flex';
+      if (loginButton) loginButton.style.display = 'none';
+    }
+
+    function updateUIForLoggedOutUser() {
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
+      if (dropdown) dropdown.style.display = 'none';
+      if (loginButton) loginButton.style.display = 'block';
+    }
+
+    // ---------- Leaderboard ----------
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function unblur() {
+      const overlay = document.querySelector('.coming-soon-overlay');
+      const blurred = document.querySelector('.coming-soon-container');
+      if (overlay) overlay.remove();
+      if (blurred) {
+        blurred.style.filter = 'none';
+        blurred.style.pointerEvents = 'auto';
+        blurred.style.userSelect = 'auto';
+      }
+    }
+
+    function renderPodium(container, top3) {
+      container.innerHTML = '';
+      const card = (e, big=false)=>`
+        <div class="podium" style="${big?'transform:scale(1.1);':''}">
+          <img src="${e.avatar || 'https://via.placeholder.com/64'}" alt="Top ${e.rank}">
+          <h4 class="${e.rank===1?'rank-highlight':''}">[${e.rank}] ${escapeHtml(e.displayName||'Player')}</h4>
+          <div class="volume-label">${Number(e.totalPoints||0).toLocaleString()} XP</div>
+        </div>`;
+      if (!top3.length) return;
+      if (top3.length===1) { container.innerHTML = card(top3[0], true); return; }
+      if (top3.length===2) { container.innerHTML = card(top3[1]) + card(top3[0], true); return; }
+      const one = top3.find(r=>r.rank===1);
+      const two = top3.find(r=>r.rank===2);
+      const three = top3.find(r=>r.rank===3);
+      container.innerHTML = (two?card(two):'') + (one?card(one,true):'') + (three?card(three):'');
+    }
+
+    function renderTable(tbody, items, meId) {
+      tbody.innerHTML = '';
+      for (const e of items.sort((a,b)=>a.rank-b.rank)) {
+        const isYou = meId && e.userId === meId;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="${e.rank===1?'rank-highlight':''}">[${e.rank}]</td>
+          <td class="${isYou?'you':''}">${escapeHtml(isYou ? 'You' : (e.displayName || 'Player'))}</td>
+          <td>${Number(e.totalPoints||0).toLocaleString()}</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function fetchLeaderboard(limit=100, offset=0) {
+      const res = await fetch(`/api/leaderboard?limit=${limit}&offset=${offset}`);
+      if (!res.ok) throw new Error('Failed to load leaderboard');
+      return res.json(); // { items, nextOffset }
+    }
+
+    // ---------- Init ----------
+    document.addEventListener('DOMContentLoaded', async () => {
+      const me = await fetchUserData();
+      const meId = me?.id || null;
+
+      try {
+        const data = await fetchLeaderboard(100, 0);
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        unblur();
+
+        const podiumWrap = document.getElementById('topThree');
+        const tbody = document.getElementById('leaderboardBody');
+
+        if (!items.length) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#ccc;">No players yet. Be the first to earn XP!</td></tr>`;
+          return;
         }
 
-        function updateUIForLoggedInUser(user) {
-            const avatar = document.getElementById('userAvatar');
-            const name = document.getElementById('userName');
-            const dropdown = document.getElementById('accountDropdown');
-            const loginButton = document.getElementById('loginButton');
-            
-            avatar.src = user.avatar;
-            name.textContent = user.displayName;
-            dropdown.style.display = 'flex';
-            loginButton.style.display = 'none';
+        renderPodium(podiumWrap, items.slice(0,3));
+        renderTable(tbody, items, meId);
+      } catch (e) {
+        console.error(e);
+        const tbody = document.getElementById('leaderboardBody');
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#f39c9c;">Failed to load leaderboard.</td></tr>`;
         }
+      }
 
-        function updateUIForLoggedOutUser() {
-            const dropdown = document.getElementById('accountDropdown');
-            const loginButton = document.getElementById('loginButton');
-            
-            dropdown.style.display = 'none';
-            loginButton.style.display = 'block';
-        }
+      // Optional: keep auth header fresh
+      setInterval(fetchUserData, 30000);
+    });
 
-        // Initialize auth state on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchUserData();
-            setInterval(fetchUserData, 30000); // Check every 30 seconds
-        });
+    // Handle login button click
+    const loginBtn = document.getElementById('loginButton');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        window.location.href = '/auth/google';
+      });
+    }
 
-        // Handle login button click
-        document.getElementById('loginButton').addEventListener('click', () => {
-            window.location.href = '/auth/google';
-        });
+    // Handle dropdown toggle
+    const acct = document.getElementById('accountDropdown');
+    if (acct) {
+      acct.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('dropdownContent').classList.toggle('show');
+      });
+    }
 
-        // Handle dropdown toggle
-        document.getElementById('accountDropdown').addEventListener('click', (e) => {
-            e.stopPropagation();
-            document.getElementById('dropdownContent').classList.toggle('show');
-        });
-
-        // Close dropdown when clicking outside
-        window.addEventListener('click', () => {
-            document.getElementById('dropdownContent').classList.remove('show');
-        });
-    </script>
-  
+    // Close dropdown when clicking outside
+    window.addEventListener('click', () => {
+      const dd = document.getElementById('dropdownContent');
+      if (dd) dd.classList.remove('show');
+    });
+  </script>
 </body>
 </html>
