@@ -175,10 +175,8 @@
           <tr>
             <th>Rank</th>
             <th>Player</th>
-            <th>XP</th>
-            <th>Challenges</th>
+            <th>Score</th>
             <th>Games Completed</th>
-            <th>Accuracy</th>
           </tr>
         </thead>
         <tbody id="leaderboardBody">
@@ -306,9 +304,7 @@
           <td class="${e.rank===1?'rank-highlight':''}">[${e.rank}]</td>
           <td class="${isYou?'you':''}">${escapeHtml(isYou ? 'You' : (e.displayName || 'Player'))}</td>
           <td>${Number(e.totalPoints||0).toLocaleString()}</td>
-          <td>—</td>
-          <td>—</td>
-          <td>—</td>
+          <td>${e.gamesCompleted || 0}</td>
         `;
         tbody.appendChild(tr);
       }
@@ -335,8 +331,7 @@
         const tbody = document.getElementById('leaderboardBody');
 
         if (!items.length) {
-          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#ccc;">No players yet. Be the first to earn XP!</td></tr>`;
-          return;
+          tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem;color:#ccc;">No players yet. Be the first to earn XP!</td></tr>`;
         }
 
         renderPodium(podiumWrap, items.slice(0,3));
@@ -345,7 +340,7 @@
         console.error(e);
         const tbody = document.getElementById('leaderboardBody');
         if (tbody) {
-          tbody.innerHTML = `<tr><td colspan="6" style="padding:2rem;color:#f39c9c;">Failed to load leaderboard.</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem;color:#f39c9c;">Failed to load leaderboard.</td></tr>`;
         }
       }
 

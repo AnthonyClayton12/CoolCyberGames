@@ -638,6 +638,7 @@ app.get('/api/dashboard', async (req, res) => {
 /**********************************************************************************
  *                              GET /api/leaderboard
  *  - Public: returns users sorted by totalPoints desc
+ *  - Adds gamesCompleted by counting completion badges per user
  *  - Query: ?limit=50&offset=0
  **********************************************************************************/
 app.get('/api/leaderboard', async (req, res) => {
@@ -645,7 +646,7 @@ app.get('/api/leaderboard', async (req, res) => {
     const limit = Math.min(parseInt(req.query.limit || '50', 10), 200);
     const offset = Math.max(parseInt(req.query.offset || '0', 10), 0);
 
-    // 1) Get totals slice
+    // 1) Get totals slice (rank by totalPoints)
     const totals = await Total.find({})
       .sort({ totalPoints: -1, _id: 1 })
       .skip(offset)
@@ -653,29 +654,42 @@ app.get('/api/leaderboard', async (req, res) => {
       .lean();
 
     const userIds = totals.map(t => t.userId);
-    // 2) Fetch user display info from userDB in one go
+
+    // 2) Fetch user display info
     const users = await User.find({ _id: { $in: userIds } })
       .select('_id displayName avatar')
       .lean();
     const uMap = new Map(users.map(u => [String(u._id), u]));
 
-    // 3) Build rows with rank numbers
+    // 3) Count "games completed" from completion badges in UserUnlocks
+    //    (badge keys end with "__completion")
+    const unlocks = await UserUnlocks.find({ userId: { $in: userIds } })
+      .select('userId badges.key')
+      .lean();
+
+    const completedByUser = new Map();
+    for (const doc of unlocks) {
+      const uid = String(doc.userId);
+      const count = (doc.badges || []).reduce((n, b) => n + (String(b.key).endsWith('__completion') ? 1 : 0), 0);
+      completedByUser.set(uid, count);
+    }
+
+    // 4) Build rows (rank, player, score, gamesCompleted)
     const startRank = offset + 1;
     const items = totals.map((t, i) => {
-      const u = uMap.get(String(t.userId)) || {};
+      const uid = String(t.userId);
+      const u = uMap.get(uid) || {};
       return {
         rank: startRank + i,
-        userId: String(t.userId),
+        userId: uid,
         displayName: u.displayName || 'Player',
         avatar: u.avatar || 'https://via.placeholder.com/40',
-        totalPoints: t.totalPoints
+        totalPoints: t.totalPoints || 0,
+        gamesCompleted: completedByUser.get(uid) || 0
       };
     });
 
-    res.json({
-      items,
-      nextOffset: offset + items.length
-    });
+    res.json({ items, nextOffset: offset + items.length });
   } catch (e) {
     console.error('/api/leaderboard error', e);
     res.status(500).json({ error: 'Internal Server Error' });
