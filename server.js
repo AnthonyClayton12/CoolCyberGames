@@ -175,6 +175,13 @@ passport.use(new GoogleStrategy({
           avatar: profile.photos[0]?.value.replace(/=s96-c/, '=s400-c')
         });
         await newUser.save();
+        // 🔹 ensure they have a Total row
+        await Total.findOneAndUpdate(
+          { userId: newUser._id },
+          { $setOnInsert: { totalPoints: 0 } },
+          { upsert: true }
+        );
+
         return done(null, newUser);
       }
     } catch (err) {
@@ -391,8 +398,11 @@ Promise.all([
   new Promise(resolve => gameDB.once('open', resolve)),
   new Promise(resolve => userDB.once('open', resolve))
 ]).then(async () => {
-  // 🔹 Auto-seed if catalog is empty
+  // 🔹 Auto-seed badges/achievements
   await autoSeedIfEmpty();
+
+  // 🔹 Auto-backfill totals for all users
+  await autoBackfillTotals();
 
   app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
@@ -671,6 +681,31 @@ app.get('/api/leaderboard', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+/**********************************************************************************
+ *                              AUTO-BACKFILL TOTALS
+ **********************************************************************************/
+async function autoBackfillTotals() {
+  try {
+    const users = await User.find({}).select('_id').lean();
+    const totals = await Total.find({ userId: { $in: users.map(u => u._id) } }).select('userId').lean();
+    const haveTotals = new Set(totals.map(t => String(t.userId)));
+
+    const toInsert = users
+      .filter(u => !haveTotals.has(String(u._id)))
+      .map(u => ({ userId: u._id, totalPoints: 0 }));
+
+    if (toInsert.length) {
+      await Total.insertMany(toInsert);
+      console.log(`🟢 Backfilled ${toInsert.length} totals at startup`);
+    } else {
+      console.log("ℹ️ All users already have totals");
+    }
+  } catch (err) {
+    console.error("❌ autoBackfillTotals failed:", err);
+  }
+}
+
 
 /**********************************************************************************
  *                              DEV SEED 
