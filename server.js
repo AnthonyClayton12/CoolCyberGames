@@ -334,15 +334,68 @@ app.use((err, req, res, next) => {
 });
 
 /**********************************************************************************
+ *                              AUTO-SEED IF EMPTY
+ **********************************************************************************/
+async function autoSeedIfEmpty() {
+  try {
+    const achCount = await AchievementCatalog.countDocuments();
+    const badgeCount = await BadgeCatalog.countDocuments();
+
+    if (achCount === 0 && badgeCount === 0) {
+      console.log("📥 Catalog empty — seeding Malware Maze…");
+
+      const ach1 = {
+        key: 'malware_maze__phish_master',
+        gameKey: 'malware_maze',
+        name: 'Phishing Master',
+        description: 'Become a master in phishing detection.',
+        threshold: { type: 'score', value: 999999999 }, // prevents auto-unlock by score
+        sort: 1
+      };
+      const ach2 = {
+        key: 'malware_maze__malware_expert',
+        gameKey: 'malware_maze',
+        name: 'Malware & Scam Expert',
+        description: 'Malware and scam catching expert.',
+        threshold: { type: 'score', value: 999999999 },
+        sort: 2
+      };
+      const badge = {
+        key: 'malware_maze__completion',
+        gameKey: 'malware_maze',
+        name: 'Completed Malware Maze',
+        iconUrl: '/assets/icons/badge.png',
+        completionRule: 'score>0',
+        sort: 1
+      };
+
+      await AchievementCatalog.updateOne({ key: ach1.key }, { $set: ach1 }, { upsert: true });
+      await AchievementCatalog.updateOne({ key: ach2.key }, { $set: ach2 }, { upsert: true });
+      await BadgeCatalog.updateOne({ key: badge.key }, { $set: badge }, { upsert: true });
+
+      console.log("✅ Malware Maze catalog seeded.");
+    } else {
+      console.log(`📂 Catalog already seeded (achievements: ${achCount}, badges: ${badgeCount}) — skipping.`);
+    }
+  } catch (err) {
+    console.error("❌ autoSeedIfEmpty failed:", err);
+  }
+}
+
+
+/**********************************************************************************
  *                              SERVER STARTUP
  **********************************************************************************/
 // Start Server
 Promise.all([
   new Promise(resolve => gameDB.once('open', resolve)),
   new Promise(resolve => userDB.once('open', resolve))
-]).then(() => {
+]).then(async () => {
+  // 🔹 Auto-seed if catalog is empty
+  await autoSeedIfEmpty();
+
   app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+    console.log(`🚀 Server running on port ${port}`);
     console.log(`Game DB: ${gameDB.name}`);
     console.log(`User DB: ${userDB.name}`);
   });
