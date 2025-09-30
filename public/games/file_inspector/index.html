@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>File Inspector — With Main Menu</title>
+<style>
+:root{
+  --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#94a3b8; --border:#1f2937;
+  --ring:#6ab8ff55; --radius:14px; --gap:16px;
+  font-family: system-ui, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; color:var(--text);
+  background: radial-gradient(1000px 600px at 20% -10%, #16213a 0%, #0f172a 40%, #0b1220 100%);
+  display:grid; place-items:center; padding:24px;
+}
+.panel{
+  width:min(860px,92vw); background:var(--panel); border:1px solid var(--border);
+  border-radius:var(--radius); padding:22px;
+  box-shadow:0 20px 80px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.03);
+}
+h1{ margin:0 0 14px 0; font-size:26px; letter-spacing:.3px }
+.sub{ color:var(--muted); margin:8px 0 18px }
+
+.hidden{ display:none !important }
+
+/* menu */
+.menu-grid{ display:grid; gap:16px }
+.opt-row{ display:flex; gap:12px; align-items:center; flex-wrap:wrap }
+.select, .checkbox, .menu-btn{
+  border:1px solid var(--border); background:#0b1220; color:var(--text);
+  border-radius:10px; padding:10px 14px;
+}
+.menu-btn{
+  cursor:pointer; transition:.15s transform,.15s box-shadow,.15s border-color;
+}
+.menu-btn:hover{ transform:translateY(-1px); box-shadow:0 0 0 4px var(--ring); border-color:#334155 }
+.menu-btn.primary{ border-color:#1f3a55; background:linear-gradient(180deg,#0b2538,#081a27); color:#e0f2fe }
+.note{ color:var(--muted); font-size:14px }
+
+/* game */
+.topbar{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; color:var(--muted) }
+#file-info{
+  display:grid; grid-template-columns:120px 1fr; gap:var(--gap); align-items:center;
+  background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:16px;
+}
+#file-icon{ width:96px; height:96px; object-fit:contain; background:#0f172a; border:1px solid var(--border); border-radius:10px; display:block }
+#details p{ margin:6px 0 }
+#details strong{ color:var(--muted); font-weight:600; display:inline-block; min-width:72px }
+#actions{ display:flex; gap:10px; margin:16px 0 8px; flex-wrap:wrap }
+.btn{
+  appearance:none; border:1px solid var(--border); background:#0b1220; color:var(--text);
+  padding:10px 14px; border-radius:10px; cursor:pointer;
+  transition:.15s transform,.15s box-shadow,.15s border-color;
+}
+.btn:hover{ transform:translateY(-1px); box-shadow:0 0 0 4px var(--ring); border-color:#334155 }
+.btn:active{ transform:none; box-shadow:none }
+.btn.ok    { border-color:#14532d; background:linear-gradient(180deg,#052e1a,#03160e); color:#d1fae5 }
+.btn.warn  { border-color:#7c4a0e; background:linear-gradient(180deg,#2b1a06,#1a1205); color:#fde68a }
+.btn.danger{ border-color:#7f1d1d; background:linear-gradient(180deg,#2a0b0b,#160606); color:#fecaca }
+#score{ margin:8px 0 0; color:var(--muted) }
+#feedback{ margin-top:12px; padding:12px; border-radius:10px; border:1px solid var(--border); display:none }
+#feedback.show{ display:block }
+.good{ background:#0a2619 } .bad{ background:#2a0e10 }
+
+/* results */
+.results-grid{ display:grid; gap:14px }
+.stat{ background:#0b1220; border:1px solid var(--border); border-radius:12px; padding:12px }
+</style>
+</head>
+<body>
+
+<!-- ========== MAIN MENU ========== -->
+<section id="screen-menu" class="panel">
+  <h1>Malicious File Finder</h1>
+  <p class="sub">Train your eye to spot risky files: double extensions, macro documents, suspicious archives, and more.</p>
+
+  <div class="menu-grid">
+    <div class="opt-row">
+      <label for="rounds"><strong>Rounds:</strong></label>
+      <select id="rounds" class="select">
+        <option value="3">3</option>
+        <option value="5" selected>5</option>
+        <option value="10">10</option>
+      </select>
+      <label class="opt-row">
+        <input id="shuffle" type="checkbox" class="checkbox" checked />
+        Randomize order
+      </label>
+    </div>
+
+    <button id="start" class="menu-btn primary">Start Training</button>
+    <p class="note">Shortcuts: A=Approve, Q=Quarantine, D=Delete, N or → = Next</p>
+  </div>
+</section>
+
+<!-- ========== GAME SCREEN ========== -->
+<section id="screen-game" class="panel hidden">
+  <div class="topbar">
+    <h1 style="margin:0">File Inspector</h1>
+    <div><span id="progress">1 / 1</span> • <span id="score">Score: 0</span></div>
+  </div>
+
+  <div id="file-info">
+    <img id="file-icon" alt="File icon" />
+    <div id="details">
+      <p><strong>Name:</strong> <span id="file-name">—</span></p>
+      <p><strong>Size:</strong> <span id="file-size">—</span></p>
+      <p><strong>Type:</strong> <span id="file-type">—</span></p>
+      <p><strong>Date:</strong> <span id="file-date">—</span></p>
+    </div>
+  </div>
+
+  <div id="actions">
+    <button class="btn ok"     id="approve">Approve (A)</button>
+    <button class="btn warn"   id="quarantine">Quarantine (Q)</button>
+    <button class="btn danger" id="delete">Delete (D)</button>
+    <button class="btn"        id="next" style="margin-left:auto">Next →</button>
+  </div>
+
+  <div id="feedback"></div>
+</section>
+
+<!-- ========== RESULTS SCREEN ========== -->
+<section id="screen-results" class="panel hidden">
+  <h1>Results</h1>
+  <div class="results-grid">
+    <div class="stat"><strong>Final score:</strong> <span id="r-score">0</span></div>
+    <div class="stat"><strong>Rounds played:</strong> <span id="r-rounds">0</span></div>
+    <div class="stat"><strong>Correct answers:</strong> <span id="r-correct">0</span></div>
+    <div class="stat"><strong>Incorrect answers:</strong> <span id="r-wrong">0</span></div>
+  </div>
+  <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap">
+    <button id="play-again" class="menu-btn primary">Play again</button>
+    <button id="back-menu" class="menu-btn">Back to Menu</button>
+  </div>
+</section>
+
+<script>
+// Inline SVG icons (no external files)
+const ICONS = {
+  exe: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="16" fill="#7f1d1d"/><text x="64" y="76" font-family="monospace" font-size="36" text-anchor="middle" fill="white">EXE</text></svg>`),
+  pdf: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="16" fill="#1d4ed8"/><text x="64" y="76" font-family="monospace" font-size="36" text-anchor="middle" fill="white">PDF</text></svg>`),
+  doc: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="16" fill="#0e7490"/><text x="64" y="76" font-family="monospace" font-size="36" text-anchor="middle" fill="white">DOC</text></svg>`),
+  zip: 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128"><rect width="128" height="128" rx="16" fill="#92400e"/><text x="64" y="76" font-family="monospace" font-size="36" text-anchor="middle" fill="white">ZIP</text></svg>`)
+};
+
+// Master dataset (edit freely)
+const ALL_FILES = [
+  { name:"invoice.pdf.exe", size:25.0, type:"Executable",             date:"2025-07-28", icon:ICONS.exe, correct:"delete",
+    explanation:"Double extension indicates an .exe disguised as .pdf. Never run; delete." },
+  { name:"Office_Macro_Template.docm", size:312.4, type:"Doc (macro)", date:"2025-04-03", icon:ICONS.doc, correct:"quarantine",
+    explanation:"Macro-enabled documents can run code. Quarantine and verify before opening." },
+  { name:"quarterly_report.pdf", size:814.7, type:"PDF",               date:"2025-01-15", icon:ICONS.pdf, correct:"approve",
+    explanation:"Normal-looking PDF with expected sender and pattern. Approve." },
+  { name:"payment-details.zip", size:92.8, type:"Compressed Archive",  date:"2025-05-19", icon:ICONS.zip, correct:"quarantine",
+    explanation:"Archives can hide executables. Quarantine and scan before extracting." },
+  { name:"HR_Policies_Update.pdf", size:640.2, type:"PDF",             date:"2025-02-11", icon:ICONS.pdf, correct:"approve",
+    explanation:"Expected internal doc with normal naming." },
+  { name:"bonus_form.pdf.exe", size:41.5, type:"Executable",           date:"2025-06-02", icon:ICONS.exe, correct:"delete",
+    explanation:"Again, double extension pretending to be a PDF." }
+];
+
+// ------- state & helpers -------
+let currentIdx = 0;         // index within the current game set
+let score = 0;
+let correct = 0, wrong = 0;
+let gameSet = [];           // subset of files for this run
+
+const $ = s => document.querySelector(s);
+const scrMenu = $('#screen-menu'), scrGame = $('#screen-game'), scrResults = $('#screen-results');
+
+function showScreen(which){
+  scrMenu.classList.add('hidden');
+  scrGame.classList.add('hidden');
+  scrResults.classList.add('hidden');
+  which.classList.remove('hidden');
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]] = [arr[j],arr[i]];
+  }
+  return arr;
+}
+
+// ------- game rendering -------
+const nameEl = $('#file-name'), sizeEl = $('#file-size'), typeEl = $('#file-type'), dateEl = $('#file-date');
+const iconEl = $('#file-icon');
+const progressEl = $('#progress'), scoreEl = $('#score');
+const feedback = $('#feedback');
+
+function showFile(i){
+  const f = gameSet[i];
+  nameEl.textContent = f.name;
+  sizeEl.textContent = `${f.size} KB`;
+  typeEl.textContent = f.type;
+  dateEl.textContent = f.date;
+  iconEl.src = f.icon; iconEl.alt = f.type;
+  progressEl.textContent = `${i+1} / ${gameSet.length}`;
+  feedback.className = ''; feedback.textContent = '';
+}
+
+function delta(choice, correct){ return (choice===correct) ? (correct!=='approve'?10:5) : (correct==='approve'?-5:-10); }
+
+function choose(choice){
+  const f = gameSet[currentIdx];
+  const d = delta(choice, f.correct);
+  score += d; scoreEl.textContent = `Score: ${score}`;
+  const ok = (choice === f.correct);
+  ok ? correct++ : wrong++;
+  feedback.className = (ok ? 'good' : 'bad') + ' show';
+  feedback.textContent = (ok ? '✅ Correct: ' : '❌ Wrong: ') + f.explanation;
+}
+
+function nextFile(){
+  currentIdx++;
+  if(currentIdx >= gameSet.length){
+    // finish
+    $('#r-score').textContent = score;
+    $('#r-rounds').textContent = gameSet.length;
+    $('#r-correct').textContent = correct;
+    $('#r-wrong').textContent = wrong;
+    showScreen(scrResults);
+    return;
+  }
+  showFile(currentIdx);
+}
+
+// ------- wiring -------
+$('#approve').addEventListener('click', () => choose('approve'));
+$('#quarantine').addEventListener('click', () => choose('quarantine'));
+$('#delete').addEventListener('click', () => choose('delete'));
+$('#next').addEventListener('click', nextFile);
+
+window.addEventListener('keydown', (e) => {
+  if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName)) return;
+  const k = e.key.toLowerCase();
+  if(k==='a') choose('approve');
+  if(k==='q') choose('quarantine');
+  if(k==='d') choose('delete');
+  if(k==='n' || e.key==='ArrowRight') nextFile();
+});
+
+// menu actions
+$('#start').addEventListener('click', () => {
+  const rounds = parseInt($('#rounds').value,10);
+  const shuffleOn = $('#shuffle').checked;
+
+  // build the game set
+  gameSet = ALL_FILES.slice(0);                 // copy
+  if(shuffleOn) shuffle(gameSet);
+  gameSet = gameSet.slice(0, Math.min(rounds, gameSet.length)); // cap by available items
+
+  // reset state
+  currentIdx = 0; score = 0; correct = 0; wrong = 0;
+  scoreEl.textContent = `Score: ${score}`;
+
+  // go!
+  showScreen(scrGame);
+  showFile(currentIdx);
+});
+
+$('#play-again').addEventListener('click', () => {
+  // replay with the same settings as last time
+  showScreen(scrMenu);
+});
+
+$('#back-menu').addEventListener('click', () => showScreen(scrMenu));
+
+// start on menu
+showScreen(scrMenu);
+</script>
+</body>
+</html>

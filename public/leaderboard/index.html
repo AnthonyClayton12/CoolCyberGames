@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard | Cool Cyber Games</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <style>
+    body {
+      background: #0a192f;
+      color: #E0E0E0;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 2rem;
+    }
+
+    .leaderboard-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .leaderboard-title {
+      font-size: 2.5rem;
+      color: #00FF99;
+      text-shadow: 0 0 8px #00FF99;
+    }
+
+    .leaderboard-subtext {
+      color: #ccc;
+      margin-top: 0.5rem;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .top-three {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      gap: 2rem;
+      margin-bottom: 3rem;
+      min-height: 170px;
+    }
+
+    .podium {
+      background: #112240;
+      border: 2px solid #00D8FF44;
+      box-shadow: 0 0 10px #00D8FF33;
+      padding: 1rem;
+      border-radius: 10px;
+      width: 140px;
+    }
+
+    .podium img {
+      width: 64px;
+      height: 64px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+      object-fit: cover;
+    }
+
+    .podium h4 {
+      margin: 0.5rem 0 0.25rem;
+      color: #00D8FF;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .volume-label {
+      font-size: 0.85rem;
+      color: #aaa;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #0f223a;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 0 12px rgba(0, 216, 255, 0.15);
+    }
+
+    .leaderboard-table th,
+    .leaderboard-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #1e3a5e;
+    }
+
+    .leaderboard-table th {
+      background-color: #0d2039;
+      color: #00D8FF;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-table tr:hover {
+      background-color: #102c49;
+    }
+
+    .rank-highlight {
+      color: #00FF99;
+      font-weight: bold;
+    }
+
+    .you {
+      color: #FF6900;
+      font-weight: bold;
+    }
+
+    /* Blur & Overlay */
+    .coming-soon-container {
+      filter: blur(5px);
+      pointer-events: none;
+      user-select: none;
+      position: relative;
+    }
+
+    .coming-soon-overlay {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10;
+      background-color: rgba(10, 25, 47, 0.95);
+      padding: 2rem 3rem;
+      border-radius: 20px;
+      text-align: center;
+      color: #00ffe0;
+      font-size: 2rem;
+      font-weight: bold;
+      text-shadow: 0 0 5px #00ffe0;
+      box-shadow: 0 0 20px rgba(0, 255, 224, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-container">
+      <a href="../" class="navbar-brand">
+        <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
+        <span>Cool Cyber Games</span>
+      </a>
+      <div class="navbar-links">
+        <a href="../" class="nav-link">Home</a>
+        <a href="../games/" class="nav-link">Games</a>
+        <a href="../dashboard/" class="nav-link">Dashboard</a>
+        <a href="../leaderboard/" class="nav-link active">Leaderboard</a>
+      </div>
+      <div class="auth-section">
+        <div class="account-dropdown" id="accountDropdown" style="display: none;">
+          <img src="https://via.placeholder.com/40" alt="Account" class="account-avatar" id="userAvatar">
+          <span id="userName"></span>
+          <div class="dropdown-content" id="dropdownContent">
+            <a href="/user/profile" class="dropdown-item">Profile</a>
+            <a href="/auth/logout" class="dropdown-item">Log Out</a>
+          </div>
+        </div>
+        <button class="login-button" id="loginButton">Login with Google</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="coming-soon-overlay">🚧 Loading Leaderboard… 🚧</div>
+
+  <div class="coming-soon-container">
+    <div class="leaderboard-container">
+      <h1 class="leaderboard-title">Global Leaderboard</h1>
+      <p class="leaderboard-subtext">Climb the ranks by solving challenges, completing games, and mastering cybersecurity skills.</p>
+
+      <div class="top-three" id="topThree"></div>
+
+      <table class="leaderboard-table">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Player</th>
+            <th>Score</th>
+            <th>Games Completed</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+          <tr><td colspan="6" style="padding:1.5rem;color:#9bb3cf;">Fetching live data…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="glow-line"></div>
+      <div class="footer-section">
+        <h3>Navigation</h3>
+        <ul class="footer-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/games">Games</a></li>
+          <li><a href="/dashboard">Dashboard</a></li>
+          <li><a href="/leaderboard">Leaderboard</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>About</h3>
+        <ul class="footer-links">
+          <li><a href="/about">About Us</a></li>
+          <li><a href="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Legal</h3>
+        <ul class="footer-links">
+          <li><a href="user/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="user/terms-of-service.html">Terms of Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Social</h3>
+        <ul class="footer-links">
+          <li><a href="https://x.com/coolcybergames">Twitter</a></li>
+          <li><a href="https://github.com/AnthonyClayton12/CoolCyberGames">GitHub</a></li>
+          <li><a href="https://discord.gg/coolcybergames">Discord</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.js"></script>
+  <script>
+    // ---------- Auth UI ----------
+    async function fetchUserData() {
+      try {
+        const response = await fetch('/api/user', { credentials: 'include' });
+        if (!response.ok) throw new Error('Not authenticated');
+        const user = await response.json();
+        updateUIForLoggedInUser(user);
+        return user;
+      } catch (error) {
+        updateUIForLoggedOutUser();
+        return null;
+      }
+    }
+
+    function updateUIForLoggedInUser(user) {
+      const avatar = document.getElementById('userAvatar');
+      const name = document.getElementById('userName');
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
+
+      if (avatar) avatar.src = user.avatar || 'https://via.placeholder.com/40';
+      if (name) name.textContent = user.displayName || 'You';
+      if (dropdown) dropdown.style.display = 'flex';
+      if (loginButton) loginButton.style.display = 'none';
+    }
+
+    function updateUIForLoggedOutUser() {
+      const dropdown = document.getElementById('accountDropdown');
+      const loginButton = document.getElementById('loginButton');
+      if (dropdown) dropdown.style.display = 'none';
+      if (loginButton) loginButton.style.display = 'block';
+    }
+
+    // ---------- Leaderboard ----------
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    function unblur() {
+      const overlay = document.querySelector('.coming-soon-overlay');
+      const blurred = document.querySelector('.coming-soon-container');
+      if (overlay) overlay.remove();
+      if (blurred) {
+        blurred.style.filter = 'none';
+        blurred.style.pointerEvents = 'auto';
+        blurred.style.userSelect = 'auto';
+      }
+    }
+
+    function renderPodium(container, top3) {
+      container.innerHTML = '';
+      const card = (e, big=false)=>`
+        <div class="podium" style="${big?'transform:scale(1.1);':''}">
+          <img src="${e.avatar || 'https://via.placeholder.com/64'}" alt="Top ${e.rank}">
+          <h4 class="${e.rank===1?'rank-highlight':''}">[${e.rank}] ${escapeHtml(e.displayName||'Player')}</h4>
+          <div class="volume-label">${Number(e.totalPoints||0).toLocaleString()} XP</div>
+        </div>`;
+      if (!top3.length) return;
+      if (top3.length===1) { container.innerHTML = card(top3[0], true); return; }
+      if (top3.length===2) { container.innerHTML = card(top3[1]) + card(top3[0], true); return; }
+      const one = top3.find(r=>r.rank===1);
+      const two = top3.find(r=>r.rank===2);
+      const three = top3.find(r=>r.rank===3);
+      container.innerHTML = (two?card(two):'') + (one?card(one,true):'') + (three?card(three):'');
+    }
+
+    function renderTable(tbody, items, meId) {
+      tbody.innerHTML = '';
+      for (const e of items.sort((a,b)=>a.rank-b.rank)) {
+        const isYou = meId && e.userId === meId;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="${e.rank===1?'rank-highlight':''}">[${e.rank}]</td>
+          <td class="${isYou?'you':''}">${escapeHtml(isYou ? 'You' : (e.displayName || 'Player'))}</td>
+          <td>${Number(e.totalPoints||0).toLocaleString()}</td>
+          <td>${e.gamesCompleted || 0}</td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function fetchLeaderboard(limit=100, offset=0) {
+      const res = await fetch(`/api/leaderboard?limit=${limit}&offset=${offset}`);
+      if (!res.ok) throw new Error('Failed to load leaderboard');
+      return res.json(); // { items, nextOffset }
+    }
+
+    // ---------- Init ----------
+    document.addEventListener('DOMContentLoaded', async () => {
+      const me = await fetchUserData();
+      const meId = me?.id || null;
+
+      try {
+        const data = await fetchLeaderboard(100, 0);
+        const items = Array.isArray(data.items) ? data.items : [];
+
+        unblur();
+
+        const podiumWrap = document.getElementById('topThree');
+        const tbody = document.getElementById('leaderboardBody');
+
+        if (!items.length) {
+          tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem;color:#ccc;">No players yet. Be the first to earn XP!</td></tr>`;
+        }
+
+        renderPodium(podiumWrap, items.slice(0,3));
+        renderTable(tbody, items, meId);
+      } catch (e) {
+        console.error(e);
+        const tbody = document.getElementById('leaderboardBody');
+        if (tbody) {
+          tbody.innerHTML = `<tr><td colspan="4" style="padding:2rem;color:#f39c9c;">Failed to load leaderboard.</td></tr>`;
+        }
+      }
+
+      // Optional: keep auth header fresh
+      setInterval(fetchUserData, 30000);
+    });
+
+    // Handle login button click
+    const loginBtn = document.getElementById('loginButton');
+    if (loginBtn) {
+      loginBtn.addEventListener('click', () => {
+        window.location.href = '/auth/google';
+      });
+    }
+
+    // Handle dropdown toggle
+    const acct = document.getElementById('accountDropdown');
+    if (acct) {
+      acct.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('dropdownContent').classList.toggle('show');
+      });
+    }
+
+    // Close dropdown when clicking outside
+    window.addEventListener('click', () => {
+      const dd = document.getElementById('dropdownContent');
+      if (dd) dd.classList.remove('show');
+    });
+  </script>
+</body>
+</html>

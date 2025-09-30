@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Cyber Games</title>
+    
+    <!-- CSS -->
     <link rel="stylesheet" href="/css/style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/lucide/0.263.1/lucide.min.css" rel="stylesheet">
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+
 </head>
 <body>
     <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="navbar-container">
             <a href="/" class="navbar-brand">
-                <img src="/assets/CCG_green_blue.jpg" alt="CCG Logo" style="height: 32px; width: 32px;">
+                <img src="/assets/ccg_shield_logo.png" alt="CCG Logo" style="height: 32px; width: 32px;">
                 <span>Cool Cyber Games</span>
             </a>
+
+            
             <div class="navbar-links">
                 <a href="/" class="nav-link active">Home</a>
                 <a href="/games/" class="nav-link">Games</a>
-                <a href="/" class="nav-link">Dashboard</a>
-                <a href="/about/" class="nav-link">About</a>
-                <a href="/contact/" class="nav-link">Contact</a>
+                <a href="/dashboard" class="nav-link">Dashboard</a>
+                <a href="/leaderboard" class="nav-link">Leaderboard</a>
                 
                 <!-- Auth Section -->
                 <div class="auth-section">
@@ -39,46 +46,109 @@
     </nav>
 
     <!-- Main Content -->
+<!-- Main Content -->
     <main class="main-container">
         <!-- Welcome Section -->
+        <img src="/assets/ccg_loading_screen.png" alt="Cyber Characters" class="hero-bg">
+        <div class="hero-overlay"></div>
         <div class="welcome-section">
-            <h1 class="welcome-title">
-                Welcome to 
-                <span class="gradient-text animate-pulse">Cool Cyber Games</span>
+            <h1 class="welcome-title"> 
+                <span class="gradient-flow">Cool Cyber Games</span>
             </h1>
             <p class="welcome-description">
                 Embark on an epic journey through our cybersecurity challenges. 
                 Learn, compete, and become a master of digital defense through 
                 interactive gameplay and real-world scenarios.
             </p>
-            <button class="start-button animate-bounce">
-                Start Your Journey
+            <button class="start-button animate-bounce" onclick="window.location.href='/games/'">
+              Start Your Journey
             </button>
         </div>
 
         <!-- Featured Games Section -->
-        <section class="featured-section">
-            <h2 class="section-title">Featured Games</h2>
-            <div class="featured-games-grid">
-                <a href="/games/malware_maze" class="featured-game-item">
-                    <img src="/assets/thumbnails/malware_maze_thumbnail.png" class="game-image">
-                    <p class="featured-game-title">Malware Maze</p>
-                </a>
-            </div>
-        </section>
+<!-- Featured Games Section -->
+    <section class="featured-section navy-bg">
+        <h2 class="section-title">Featured Games</h2>
+        <div class="featured-games-grid">
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="../assets/thumbnails/malware_maze_thumbnail.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Malware Maze</h3>
+                    <p>Detect and defend against phishing attempts</p>
+                </div>
+            </a>
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="../assets/thumbnails/password_master_thumbnail.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Master the Password</h3>
+                    <p>Power-up your password while on an epic adventure!</p>
+                </div>
+            </a>
+            <a href="/games/" class="featured-game-item">
+                <div class="featured-game-image-container">
+                    <img src="../assets/thumbnails/web_quest_thumbnail.png" class="featured-game-image">
+                </div>
+                <div class="game-info">
+                    <h3>Web Quest</h3>
+                    <p>Coming Soon...</p>
+                </div>
+            </a>
+        </div>
+    </section>
+    <section class="cyber-section">
+    <div class="cyber-divider"></div>
+      <div class="cyber-row reverse">
+        <img src="assets/icons/ccg_play_icon.png" alt="Play Cyber Security" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">PLAY</h2>
+          <p class="cyber-paragraph">
+            Step into simulated cyber scenarios<br>
+            and test your digital defense skills.
+          </p>
+        </div>
+      </div>
+      <div class="cyber-divider"></div>
+    
+      <div class="cyber-row">
+        <img src="assets/icons/ccg_learning_icon.png" alt="Learn Cyber Security" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">LEARN</h2>
+          <p class="cyber-paragraph">
+            Discover essential cybersecurity techniques<br>
+            and master best practices for digital safety.
+          </p>
+        </div>
+      </div>
+      <div class="cyber-divider"></div>
+    
+      <div class="cyber-row reverse">
+        <img src="assets/icons/ccg_compete_icon.png" alt="Compete in Cyber Games" class="cyber-image">
+        <div class="cyber-text">
+          <h2 class="cyber-heading">COMPETE</h2>
+          <p class="cyber-paragraph">
+            Compete with your peers to rise to the top of the<br>
+            ranks and prove your mastery of digital defense.
+          </p>
+        </div>
+      </div>
+    </section>
     </main>
 
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
+            <div class="glow-line"></div>
             <div class="footer-section">
                 <h3>Navigation</h3>
                 <ul class="footer-links">
                     <li><a href="/">Home</a></li>
                     <li><a href="/games">Games</a></li>
                     <li><a href="/dashboard">Dashboard</a></li>
-                    <li><a href="/about">About</a></li>
-                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="/leaderboard">Leaderboard</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -167,5 +237,10 @@
             document.getElementById('dropdownContent').classList.remove('show');
         });
     </script>
+
+        <!-- Floating Feedback Bubble -->
+    <div id="feedback-bubble" onclick="window.open('https://forms.gle/hZai4YXGehkCjcBN6', '_blank')">
+        Give us Feedback!
+    </div>
 </body>
 </html>
