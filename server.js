@@ -449,7 +449,6 @@ Promise.all([
   await autoSeedIfEmpty();
   await ensurePasswordMasterCatalog(); // NEW
   await autoBackfillTotals();
-  ...
 });
 
   app.listen(port, () => {
