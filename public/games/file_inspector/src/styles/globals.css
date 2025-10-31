@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@keyframes movegrid {
+  from { background-position: 0 0, 0 0; }
+  to   { background-position: 100% 100%, 100% 100%; }
+}
+@keyframes modal-pop {
+  from { transform: scale(0.96); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+@keyframes subtle-pop {
+  from { transform: translateY(2px); opacity: .98; }
+  to   { transform: none; opacity: 1; }
+}
