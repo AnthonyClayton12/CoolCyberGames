@@ -52,9 +52,3 @@ The built files will be output to the `dist` directory.
   - `types/`: TypeScript types and interfaces.
   - `styles/`: Global CSS styles.
   - `assets/`: Contains icons and other assets.
-
-## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
-
-## License
-This project is licensed under the MIT License. See the LICENSE file for details.
