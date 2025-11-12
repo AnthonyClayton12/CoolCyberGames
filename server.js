@@ -435,21 +435,9 @@ Promise.all([
   new Promise(resolve => gameDB.once('open', resolve)),
   new Promise(resolve => userDB.once('open', resolve))
 ]).then(async () => {
-  // 🔹 Auto-seed badges/achievements
   await autoSeedIfEmpty();
-
-  // 🔹 Auto-backfill totals for all users
+  await ensurePasswordMasterCatalog(); // keep if you want it at boot
   await autoBackfillTotals();
-
-  // Start Server
-Promise.all([
-  new Promise(resolve => gameDB.once('open', resolve)),
-  new Promise(resolve => userDB.once('open', resolve))
-]).then(async () => {
-  await autoSeedIfEmpty();
-  await ensurePasswordMasterCatalog(); // NEW
-  await autoBackfillTotals();
-});
 
   app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
