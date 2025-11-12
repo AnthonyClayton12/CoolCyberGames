@@ -116,7 +116,7 @@ const UserUnlocks          = gameDB.model('UserUnlocks', userUnlocksSchema);
  **********************************************************************************/
 const COMPLETION_BADGE_BY_GAME = {
   malware_maze: 'malware_maze__completion',
-  // password_master: 'password_master__completion', // future games
+  password_master: 'password_master__completion', // NEW
 };
 
 const MASTER_ACH_BY_GAME = {
@@ -124,7 +124,14 @@ const MASTER_ACH_BY_GAME = {
     'malware_maze__phish_master',
     'malware_maze__malware_expert',
   ],
-  // password_master: ['password_master__xyz', ...], // future games
+  password_master: ['password_master__winner'], // NEW (unlocked when completed:true)
+};
+
+// Optional helper: achievements tied to request flags (not score)
+const EXTRA_FLAG_ACH_BY_GAME = {
+  password_master: {
+    openedAllChests: 'password_master__all_chests', // NEW
+  },
 };
 
 /**********************************************************************************
@@ -389,6 +396,36 @@ async function autoSeedIfEmpty() {
   }
 }
 
+async function ensurePasswordMasterCatalog() {
+  const achWinner = {
+    key: 'password_master__winner',
+    gameKey: 'password_master',
+    name: 'Master the Password',
+    description: 'Completed the final password challenge.',
+    threshold: { type: 'score', value: 999999999 }, // never auto by score
+    sort: 1
+  };
+  const achAllChests = {
+    key: 'password_master__all_chests',
+    gameKey: 'password_master',
+    name: 'Treasure Hunter',
+    description: 'Opened every chest in the realm.',
+    threshold: { type: 'score', value: 999999999 }, // unlocked by flag
+    sort: 2
+  };
+  const badge = {
+    key: 'password_master__completion',
+    gameKey: 'password_master',
+    name: 'Completed Master_the_Password',
+    iconUrl: '/assets/badges/password_master_badge.png',
+    completionRule: 'score>0',
+    sort: 1
+  };
+
+  await AchievementCatalog.updateOne({ key: achWinner.key }, { $set: achWinner }, { upsert: true });
+  await AchievementCatalog.updateOne({ key: achAllChests.key }, { $set: achAllChests }, { upsert: true });
+  await BadgeCatalog.updateOne({ key: badge.key }, { $set: badge }, { upsert: true });
+}
 
 /**********************************************************************************
  *                              SERVER STARTUP
@@ -403,6 +440,16 @@ Promise.all([
 
   // 🔹 Auto-backfill totals for all users
   await autoBackfillTotals();
+
+  // Start Server
+Promise.all([
+  new Promise(resolve => gameDB.once('open', resolve)),
+  new Promise(resolve => userDB.once('open', resolve))
+]).then(async () => {
+  await autoSeedIfEmpty();
+  await ensurePasswordMasterCatalog(); // NEW
+  await autoBackfillTotals();
+});
 
   app.listen(port, () => {
     console.log(`🚀 Server running on port ${port}`);
@@ -432,7 +479,7 @@ function requireAuth(req, res, next) {
  **********************************************************************************/
 app.post('/api/score', requireAuth, async (req, res) => {
   try {
-    const { gameKey, score, completed } = req.body;
+    const { gameKey, score, completed, openedAllChests } = req.body; // NEW flag
 
     if (!gameKey || typeof score !== 'number' || Number.isNaN(score)) {
       return res.status(400).json({ error: 'gameKey and numeric score are required' });
@@ -531,6 +578,19 @@ app.post('/api/score', requireAuth, async (req, res) => {
           unlockedAchievements.push({ key });
           haveAch.add(key);
         }
+      }
+    }
+
+    // 8) Optional flag-based unlocks (e.g., openedAllChests)
+    const extra = EXTRA_FLAG_ACH_BY_GAME[gameKey] || {};
+    if (openedAllChests && extra.openedAllChests) {
+      if (!haveAch.has(extra.openedAllChests)) {
+        await UserUnlocks.updateOne(
+          { userId, 'achievements.key': { $ne: extra.openedAllChests } },
+          { $push: { achievements: { key: extra.openedAllChests, unlockedAt: now } } }
+        );
+        unlockedAchievements.push({ key: extra.openedAllChests });
+        haveAch.add(extra.openedAllChests);
       }
     }
 
