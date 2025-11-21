@@ -273,53 +273,71 @@
   <!-- ================= CATALOG SECTION ================= -->
   <div class="catalog-container">
     <div class="filter-bar">
-      <label for="sort-select">Sort By:</label>
-      <select id="sort-select">
-        <option>Most Popular</option>
-        <option>Newest</option>
-        <option>Difficulty</option>
-        <option>Time</option>
-      </select>
+      <span class="filter-label">Filter by topic:</span>
+      <div class="filter-pills">
+        <button class="filter-pill active" data-filter="all">All</button>
+        <button class="filter-pill" data-filter="malware">Malware</button>
+        <button class="filter-pill" data-filter="passwords">Passwords</button>
+        <button class="filter-pill" data-filter="phishing">Phishing</button>
+        <button class="filter-pill" data-filter="web-safety">Web Safety</button>
+      </div>
     </div>
+
 
     <!-- ================= GAMES GRID ================= -->
     <div class="games-grid">
       <!-- Game 1 -->
-      <div class="game-card" onclick="openPreview('malwareMaze')">
+      <div class="game-card" data-topics="malware" onclick="openPreview('malwareMaze')">
         <img src="/assets/thumbnails/malware_maze_thumbnail.png" alt="Malware Maze">
         <div class="game-info">
           <h3>Malware Maze</h3>
+          <div class="topic-chips">
+            <span>Malware</span>
+          </div>
           <p>Navigate through mazes and defeat malware threats.</p>
         </div>
       </div>
 
       <!-- Game 2 -->
-      <div class="game-card" onclick="openPreview('masterThePassword')">
-        <img src="/assets/thumbnails/password_master_thumbnail.png" alt="Master the Password">
-        <div class="game-info">
-          <h3>Master the Password</h3>
-          <p>Power-up your password while on an epic adventure!</p>
+    <div class="game-card" data-topics="passwords, phishing" onclick="openPreview('masterThePassword')">
+      <img src="/assets/thumbnails/password_master_thumbnail.png" alt="Master the Password">
+      <div class="game-info">
+        <h3>Master the Password</h3>
+        <div class="topic-chips">
+          <span>Passwords</span>
+          <span>Phishing</span>
         </div>
-      </div>
-
-     <!-- Game 3 -->
-        <div class="game-card" onclick="openPreview('webquest')">
-            <img src="/assets/thumbnails/web_quest_thumbnail.png" alt="Web Quest">
-            <div class="game-info">
-                <h3>Web Quest</h3>
-                <p>Explore web safety in an ancient kingdom</p>
-            </div>
-        </div>
-
-      <!-- Game 4 -->
-      <div class="game-card" onclick="openPreview('fileinspector')">
-        <img src="/assets/thumbnails/file_footprint_thumbnail.png" alt="File Footprint">
-        <div class="game-info">
-          <h3>File Footprint</h3>
-          <p>Learn how to handle Malicious files safely</p>
-        </div>
+        <p>Power-up your password while on an epic adventure!</p>
       </div>
     </div>
+
+
+     <!-- Game 3 -->
+    <div class="game-card" data-topics="web-safety, phishing" onclick="openPreview('webquest')">
+      <img src="/assets/thumbnails/web_quest_thumbnail.png" alt="Web Quest">
+      <div class="game-info">
+        <h3>Web Quest</h3>
+        <div class="topic-chips">
+          <span>Web Safety</span>
+          <span>Phishing</span>
+        </div>
+        <p>Explore web safety in an ancient kingdom</p>
+      </div>
+    </div>
+    
+      <!-- Game 4 -->
+    <div class="game-card" data-topics="malware, file-safety" onclick="openPreview('fileinspector')">
+      <img src="/assets/thumbnails/file_footprint_thumbnail.png" alt="File Footprint">
+      <div class="game-info">
+        <h3>File Footprint</h3>
+        <div class="topic-chips">
+          <span>Malware</span>
+          <span>File Safety</span>
+        </div>
+        <p>Learn how to handle Malicious files safely</p>
+      </div>
+    </div>
+
   </div>
 
   <!-- Footer -->
@@ -411,7 +429,7 @@
           time: "20-30 minutes",
           skills: "Safe browsing practices",
           description: "Explore unknown lands and learn about the ancient magic used in websites",
-          badge: "Web Surfer, Expert Browser",
+          badges: "Web Surfer, Expert Browser",
           playLink: "/games/web_quest/index.html"
       },
       fileinspector: {
@@ -421,10 +439,37 @@
           time: "10 minutes",
           skills: "Malicious file safety",
           description: "Navigate through a swarm of unknown files and learn how to identify safe files vs malicious attacks",
-          badge: "File Detector, Protection Master",
+          badges: "File Detector, Protection Master",
           playLink: "/games/file_inspector/index.html"
       }
     };
+
+    // ===== Topic filter logic =====
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterPills = document.querySelectorAll('.filter-pill');
+      const gameCards = document.querySelectorAll('.games-grid .game-card');
+    
+      filterPills.forEach(pill => {
+        pill.addEventListener('click', () => {
+          const filter = pill.dataset.filter;  // "all", "malware", etc.
+    
+          // Update active pill styling
+          filterPills.forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+    
+          // Show / hide cards based on topics
+          gameCards.forEach(card => {
+            const topics = (card.dataset.topics || '').toLowerCase();
+            if (filter === 'all') {
+              card.style.display = '';
+            } else {
+              card.style.display = topics.includes(filter) ? '' : 'none';
+            }
+          });
+        });
+      });
+    });
+
 
     function openPreview(gameId) {
       const game = gameData[gameId];
