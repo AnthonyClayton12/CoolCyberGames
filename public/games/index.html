@@ -27,6 +27,7 @@
       padding: 2rem;
     }
 
+    /* Filter bar container */
     .filter-bar {
       display: flex;
       justify-content: space-between;
@@ -37,21 +38,56 @@
       border-radius: 12px;
       border: 1px solid #00D8FF33;
       box-shadow: 0 0 10px rgba(0, 216, 255, 0.1);
+      gap: 1rem;          /* gives space between label & pills */
+      flex-wrap: wrap;    /* wraps nicely on smaller screens */
     }
 
-    .filter-bar select {
-      background-color: #0d2039;
-      color: #E0E0E0;
-      border: 1px solid #00D8FF66;
-      padding: 0.5rem;
-      border-radius: 6px;
+      .filter-label {
+      font-size: 0.95rem;
+      color: #b0bec5;
     }
+    
+    .filter-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+    
+    .filter-pill {
+      padding: 0.35rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid #00D8FF55;
+      background-color: #0b1b32;
+      color: #e0e0e0;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.2s ease, color 0.2s ease,
+                  box-shadow 0.2s ease, border-color 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+    
+    .filter-pill:hover {
+      background-color: #0f2846;
+      box-shadow: 0 0 8px rgba(0, 216, 255, 0.4);
+    }
+    
+    .filter-pill.active {
+      background-color: #00d8ff;
+      color: #02111f;
+      border-color: #00d8ff;
+      box-shadow: 0 0 12px rgba(0, 216, 255, 0.6);
+    }
+
+
 
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
     }
+
 
     .game-card {
       background: linear-gradient(145deg, #0d223f, #08192d);
@@ -70,7 +106,7 @@
 
     .game-card img {
       width: 100%;
-      height: 200px;
+      height: 170px; /* a little shorter, feels more like a catalog */
       object-fit: cover;
       display: block;
       transition: transform 0.5s ease;
@@ -93,6 +129,36 @@
       color: #B0BEC5;
       margin: 0;
     }
+
+        /* Topic chips inside each card */
+    .topic-chips {
+      display: flex;
+      gap: 0.4rem;
+      margin: 0.35rem 0 0.4rem;
+      flex-wrap: wrap;
+    }
+    
+    .topic-chips span {
+      background: #0b253f;
+      color: #00d8ff;
+      padding: 3px 8px;
+      font-size: 0.7rem;
+      border: 1px solid #00d8ff55;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      box-shadow: 0 0 6px rgba(0, 216, 255, 0.2);
+    }
+    
+    .topic-chips span:hover {
+      background: #00d8ff;
+      color: #02111f;
+      border-color: #00d8ff;
+      box-shadow: 0 0 12px rgba(0, 216, 255, 0.6);
+      cursor: default;
+    }
+
 
     .modal {
       display: none;
