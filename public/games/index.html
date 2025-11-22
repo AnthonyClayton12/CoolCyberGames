@@ -99,6 +99,12 @@
       cursor: default;
     }
 
+    .game-card.hidden-card {
+      visibility: hidden;  /* invisible + not clickable, but still takes space */
+      opacity: 0;          /* (optional) smooth if you later animate */
+    }
+
+
     .game-card:hover {
       transform: scale(1.02);
       box-shadow: 0 0 25px rgba(255, 159, 0, 0.3);
@@ -458,12 +464,17 @@
           pill.classList.add('active');
     
           // Show / hide cards based on topics
+          // Show / hide cards based on topics (mask/unmask, keep layout)
           gameCards.forEach(card => {
             const topics = (card.dataset.topics || '').toLowerCase();
-            if (filter === 'all') {
-              card.style.display = '';
+          
+            const shouldShow =
+              filter === 'all' || topics.includes(filter);
+          
+            if (shouldShow) {
+              card.classList.remove('hidden-card');
             } else {
-              card.style.display = topics.includes(filter) ? '' : 'none';
+              card.classList.add('hidden-card');
             }
           });
         });
